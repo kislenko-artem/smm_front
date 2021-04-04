@@ -10,8 +10,8 @@
                     <label for="search">Введите поисковый запрос, по которому будут собраны участники сообществ:</label>
                 </div>
                 <div>
-                    <input type="text" value= "" id="search"/>
-                    <button>Выгрузить</button>
+                    <input type="text" value= "" id="search" v-model.trim="search"/>
+                    <button v-on:click="startSearch">Выгрузить</button>
                 </div>
             </div>
         </div>
@@ -21,6 +21,24 @@
 <script>
     export default {
         layout: 'account',
+        data: () => {
+            return {
+                search: ""
+            }
+        },
+        methods: {
+            startSearch() {
+                const self = this;
+                fetch('http://localhost:9999/v0/vk/profiles?q=' + this.search)
+                    .then((response) => {
+                            return response.json();
+                        }
+                    )
+                    .then((data) => {
+                        console.log(data);
+                    });
+            }
+        }
     }
 </script>
 
