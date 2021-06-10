@@ -52,7 +52,7 @@ export default {
   methods: {
     startSearch() {
       const self = this;
-      fetch("http://localhost:9999/v0/vk/stat/groups/" + this.search, {
+      fetch("http://server:9999/v0/vk/stat/groups/" + this.search, {
         method: "post",
         headers: {
           'Accept': 'application/json',
@@ -71,7 +71,7 @@ export default {
         window: window // null
       }).then((response) => {
         let interval = setInterval(() => {
-          fetch('http://localhost:9999/v0/vk/stat/groups/' + this.search + "?age=1")
+          fetch('http://server:9999/v0/vk/stat/groups/' + this.search + "?age=1")
             .then((response) => {
                 return response.json();
               }
@@ -86,7 +86,7 @@ export default {
         }, 1000)
 
         let intervalAge = setInterval(() => {
-          fetch('http://localhost:9999/v0/vk/stat/groups/' + this.search + "?geography=1")
+          fetch('http://server:9999/v0/vk/stat/groups/' + this.search + "?geography=1")
             .then((response) => {
                 return response.json();
               }

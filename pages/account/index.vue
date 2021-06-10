@@ -29,7 +29,7 @@
         methods: {
             startSearch() {
                 const self = this;
-                fetch('http://localhost:9999/v0/vk/profiles?q=' + this.search)
+                fetch('http://server:9999/v0/vk/profiles?q=' + this.search)
                     .then((response) => {
                             return response.json();
                         }
