@@ -3,10 +3,13 @@
     <h3>Выберите: </h3>
     <ul>
       <li>
-        <NuxtLink to="/account">Поиск аудитории</NuxtLink>
+        <NuxtLink to="/account">Поиск групп</NuxtLink>
       </li>
       <li>
         <NuxtLink to="/account/members">Участники группы</NuxtLink>
+      </li>
+      <li>
+        <NuxtLink to="/account/wall">Активность участников</NuxtLink>
       </li>
       <!--            <li class="members">-->
       <!--                <a href="">Участники группы</a>-->
