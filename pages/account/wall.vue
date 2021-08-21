@@ -37,7 +37,7 @@ export default {
   methods: {
     startSearch() {
       const self = this;
-      fetch('http://server:9999/v0/vk/wall/' + this.search)
+      fetch('http://46.229.212.40:9999/v0/vk/wall/' + this.search)
         .then((response) => {
             return response.json();
           }
