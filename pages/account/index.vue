@@ -38,7 +38,7 @@ export default {
   methods: {
     startSearch() {
       const self = this;
-      fetch('http://46.229.212.40:9999/v0/vk/profiles?q=' + this.search)
+      fetch(process.env.baseUrl + '/v0/vk/profiles?q=' + this.search)
         .then((response) => {
             return response.json();
           }

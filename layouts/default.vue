@@ -3,7 +3,7 @@
     <div class='header'>
       <div class='header-top'>
         <div class="header-logo">
-          <span>vk-помощник</span>
+          <span></span>
         </div>
         <div class="account">
           <div>
@@ -34,7 +34,9 @@
     box-sizing: border-box;
     margin: 0;
   }
-
+  .main {
+    min-width: 310px;
+  }
   .header {
     width: 100%;
     height: auto;
@@ -44,7 +46,7 @@
 
   .header-top {
     height: 46px;
-    width: 1000px;
+    width: 100%;
     margin: 0 auto;
     position: relative;
   }
@@ -120,7 +122,7 @@
   }
 
   .hint-text {
-    font-size: 30px;
+    font-size: 20px;
     line-height: 1.2;
     font-family: "Arvo", "Times New Roman", Times, serif;
   }

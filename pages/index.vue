@@ -10,21 +10,6 @@
                     аудитории
                 </div>
             </article>
-            <article class="service">
-                <div class="icon"><i class="fa fa-address-book-o" aria-hidden="true"></i></div>
-                <h3>Мониторинг участников</h3>
-                <div class="description">Покажет кто добавился или удалился из участников группы</div>
-            </article>
-            <article class="service">
-                <div class="icon"><i class="fa fa-globe" aria-hidden="true"></i></div>
-                <h3>География подписчиков</h3>
-                <div class="description">Проможет в продвижении региональных групп</div>
-            </article>
-            <article class="service">
-                <div class="icon"><i class="fa fa-crosshairs" aria-hidden="true"></i></div>
-                <h3>Пересечение участников</h3>
-                <div class="description">Поможет найти аудиторию для вашей группы.</div>
-            </article>
         </div>
     </div>
 </template>

@@ -3,7 +3,7 @@
         <div class='header'>
             <div class='header-top'>
                 <div class="header-logo">
-                    <span>vk-помощник</span>
+                    <span></span>
                 </div>
                 <div class="account">
                     <div>
@@ -26,6 +26,9 @@
     *::after {
         box-sizing: border-box;
         margin: 0;
+    }
+    .main {
+      min-width: 310px;
     }
 
     .header {
@@ -113,7 +116,7 @@
         padding: 37px 10px 20px 10px;
         box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
         background: #fff;
-        width: 85%;
+        width: 80%;
     }
 
     #content-header {
@@ -209,5 +212,15 @@
         padding-bottom: 10px;
     }
 
+    @media screen and (max-width: 980px) {
+      .account-sidebar {
+        position: absolute;
+        height: 100%;
+      }
+
+      #content {
+        width: 100%;
+      }
+    }
 
 </style>

@@ -1,40 +1,63 @@
 <template>
-  <div class="account-sidebar">
-    <h3>Выберите: </h3>
-    <ul>
-      <li>
-        <NuxtLink to="/account">Поиск групп</NuxtLink>
-      </li>
-      <li>
-        <NuxtLink to="/account/members">Участники группы</NuxtLink>
-      </li>
-      <li>
-        <NuxtLink to="/account/wall">Активность участников</NuxtLink>
-      </li>
-      <!--            <li class="members">-->
-      <!--                <a href="">Участники группы</a>-->
-      <!--            </li>-->
-      <!--            <li>-->
-      <!--                <a href="">География подписчиков</a>-->
-      <!--            </li>-->
-      <!--            <li>-->
-      <!--                <a href="">Активность участников</a>-->
-      <!--            </li>-->
-      <!--            <li>-->
-      <!--                <a href="">Пересечение групп</a>-->
-      <!--            </li>-->
-      <!--            <li>-->
-      <!--                <a href="">Стена группы</a>-->
-      <!--            </li>-->
-    </ul>
+  <div>
+    <div id="menu-button" v-on:click="toggleMenu">МЕНЮ</div>
+    <div class="account-sidebar" :class="{not_active: isActive}">
+      <h3>Бизнес: </h3>
+      <ul>
+        <li>
+          <NuxtLink to="/business/categories">Категории</NuxtLink>
+        </li>
+        <li>
+          <NuxtLink to="/business/clients">Клиенты</NuxtLink>
+        </li>
+        <li>
+          <NuxtLink to="/business/incomes">Поступления</NuxtLink>
+        </li>
+        <li>
+          <NuxtLink to="/business/analize">Аналитика</NuxtLink>
+        </li>
+      </ul>
+      <h3>Вконтакте: </h3>
+      <ul>
+        <li>
+          <NuxtLink to="/account">Поиск групп</NuxtLink>
+        </li>
+        <li>
+          <NuxtLink to="/account/members">Участники группы</NuxtLink>
+        </li>
+        <li>
+          <NuxtLink to="/account/wall">Активность участников</NuxtLink>
+        </li>
+      </ul>
+    </div>
   </div>
 </template>
 
+<script>
+export default {
+  data: () => {
+    return {
+      isActive: true
+    }
+  },
+  methods: {
+    toggleMenu() {
+      console.log(this.isActive)
+      this.isActive = !this.isActive;
+    }
+  }
+
+}
+</script>
+
 <style>
+.not_active {
+  display: none;
+}
 .account-sidebar {
   position: relative;
   box-sizing: border-box;
-  width: 15%;
+  width: 20%;
   min-width: 200px;
   padding: 5px 0 1px 0;
   background-color: white;
@@ -42,7 +65,10 @@
   border-radius: 5px;
   border: none;
   min-height: 200px;
+}
 
+#menu-button {
+  display: none;
 }
 
 .account-sidebar a {
@@ -76,5 +102,22 @@
 
 .account-sidebar ul li.active a {
   color: #3F454B;
+}
+
+@media screen and (max-width: 980px) {
+  .account-sidebar {
+    position: absolute;
+    height: 100%;
+  }
+
+  #menu-button {
+    display: block;
+    position: absolute;
+    margin: -40px 0 0 5px;
+    width: 30px;
+    height: 30px;
+    border: 1px solid white;
+    cursor: pointer;
+  }
 }
 </style>
