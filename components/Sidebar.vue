@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div id="menu-button" v-on:click="toggleMenu">МЕНЮ</div>
+    <div id="menu-button" v-on:click="toggleMenu"></div>
     <div class="account-sidebar" :class="{not_active: isActive}">
       <h3>Бизнес: </h3>
       <ul>
@@ -52,19 +52,19 @@ export default {
 
 <style>
 .not_active {
-  display: none;
+  display: block;
 }
 .account-sidebar {
   position: relative;
   box-sizing: border-box;
-  width: 20%;
+  width: 200px;
   min-width: 200px;
   padding: 5px 0 1px 0;
   background-color: white;
   box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.25);
   border-radius: 5px;
   border: none;
-  min-height: 200px;
+  min-height: 400px;
 }
 
 #menu-button {
@@ -118,6 +118,10 @@ export default {
     height: 30px;
     border: 1px solid white;
     cursor: pointer;
+  }
+
+  .not_active {
+    display: none;
   }
 }
 </style>
