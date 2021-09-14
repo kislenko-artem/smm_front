@@ -7,20 +7,64 @@
       </div>
       <article>
         <h4>Список клиентов</h4>
-        <ul class="items-list">
-          <li v-for="c in clients" v-on:click="delContent(c.id)">{{ c.name }}|{{ c.phone }}|{{ c.comments }}</li>
-        </ul>
-        <div>
-          <input type="text" value="" id="nameModel" v-model.trim="nameModel"/>
-          <input type="text" value="" id="phoneModel" v-model.trim="phoneModel"/>
-          <input type="text" value="" id="commentModel" v-model.trim="commentModel"/>
-          <select v-model.trim="sourceModel">
-            <option v-for="c in clients_sources" :value="c.id">{{ c.name }}</option>
-          </select>
-          <button v-on:click="addContent">Добавить клиента</button>
-        </div>
+        <hr/>
+        <input type="text" v-model.trim="searchQuery" placeholder="Фильтр..."/>
+        <button v-on:click="toggleWin">Добавить клиента</button>
+        <hr/>
+        <Grid
+          :heroes="clients"
+          :columns="clientsColumns"
+          :filter-key="searchQuery"
+          :methodsList="methodsList"
+        />
       </article>
     </div>
+
+    <div class="pop-up" v-if="showPopUp">
+      <div>
+        <input type="text" value=""  v-model.trim="nameModel" placeholder="Имя"/>
+      </div>
+      <div>
+        <input type="text" value=""  v-model.trim="phoneModel" placeholder="Телефон"/>
+      </div>
+      <div>
+        <textarea v-model.trim="commentModel" placeholder="Комментарии"></textarea>
+      </div>
+      <div>
+      <select v-model.trim="sourceModel">
+        <option  value=""  disabled selected>Источник появления</option>
+        <option v-for="c in clients_sources" :value="c.id">{{ c.name }}</option>
+      </select>
+      </div>
+      <div class="button-block">
+        <button v-on:click="addContent">Добавить клиента</button>
+        <button v-on:click="toggleWin">Отмена</button>
+      </div>
+    </div>
+
+    <div class="pop-up" v-if="showEditPopUp">
+      <div>
+        <input type="text" value="" v-model.trim="nameModel" placeholder="Имя"/>
+      </div>
+      <div>
+        <input type="text" value="" v-model.trim="phoneModel" placeholder="Телефон"/>
+      </div>
+      <div>
+        <textarea v-model.trim="commentModel" placeholder="Комментарии"></textarea>
+      </div>
+      <div>
+        <select v-model.trim="sourceModel">
+          <option  value=""  disabled selected>Источник появления</option>
+          <option v-for="c in clients_sources" :value="c.id">{{ c.name }}</option>
+        </select>
+      </div>
+      <div class="button-block">
+        <button v-on:click="updateContent(idModel)">Редактировать клиента</button>
+        <button v-on:click="toggleEditWin">Отмена</button>
+      </div>
+    </div>
+
+
   </div>
 </template>
 
@@ -29,19 +73,50 @@ export default {
   layout: 'account',
   data: () => {
     return {
+      searchQuery: "",
+      showPopUp: false,
+      showEditPopUp: false,
+      clientsColumns: ["Имя", "Телефон", "Комментарий", "method:Удалить:id:delContent", "method:Редактировать:id:editToggleContent"],
+      methodsList: {},
+
       clients: [],
       clients_sources: [],
+
       nameModel: "",
       phoneModel: "",
       commentModel: "",
       sourceModel: "",
+      idModel: 0,
     }
   },
   mounted() {
     this.getContent();
     this.getCategories();
+    this.methodsList = {"delContent": this.delContent, "editToggleContent": this.editToggleContent};
   },
   methods: {
+    toggleWin() {
+      this.showPopUp = !this.showPopUp;
+    },
+    toggleEditWin() {
+      this.showEditPopUp = !this.showEditPopUp;
+    },
+    editToggleContent(id) {
+      let data = {};
+      for (let key in this.clients) {
+        if (this.clients[key]["id"] != id) {
+          continue
+        }
+        data = this.clients[key];
+        break
+      }
+      this.nameModel = data["Имя"];
+      this.phoneModel = data["Телефон"];
+      this.commentModel = data["Комментарий"];
+      this.idModel = id;
+      // this.sourceModel = data["Имя"];
+      this.showEditPopUp = true;
+    },
     getContent() {
       const self = this;
       fetch(process.env.baseUrl + "/v0/business/clients/")
@@ -49,7 +124,15 @@ export default {
           return response.json()
         })
         .then((data) => {
-          self.clients = data.results;
+          self.clients = [];
+          for (let key in data.results) {
+            self.clients.push({
+              "Имя": data.results[key]["name"],
+              "Телефон": data.results[key]["phone"],
+              "Комментарий": data.results[key]["comments"],
+              "id": data.results[key]["id"],
+            });
+          }
         })
     },
     addContent() {
@@ -62,8 +145,11 @@ export default {
           comments: self.commentModel,
           source_id: self.sourceModel
         })
-      });
-      this.getContent();
+      })
+        .then((data) => {
+          this.getContent();
+          this.showPopUp = false;
+        });
     },
     updateContent(id) {
       const self = this;
@@ -75,8 +161,11 @@ export default {
           comments: self.commentModel,
           source_id: self.sourceModel
         })
-      });
-      this.getContent();
+      })
+        .then((data) => {
+          this.getContent();
+          this.showEditPopUp = false;
+        });
     },
     delContent(id) {
       const self = this;
@@ -114,6 +203,36 @@ export default {
 
 .items-list {
   cursor: pointer;
+}
+
+.pop-up {
+  top: 50%;
+  margin: -200px auto;
+  position: fixed;
+  border: 1px solid black;
+  background: #ddd;
+  padding: 20px 5px 10px 5px;
+  width: 300px;
+}
+
+.pop-up > div {
+  margin: 10px 0 10px 0;
+}
+.pop-up select {
+  width: 100%;
+}
+.pop-up .button-block {
+  display: flex;
+  justify-content: space-between;
+  margin: auto 0;
+}
+.pop-up input {
+  width: 100%;
+}
+.pop-up textarea {
+  width: 100%;
+  height: 100px;
+  resize: none;
 }
 
 </style>
