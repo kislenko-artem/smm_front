@@ -7,7 +7,7 @@
       </div>
       <article>
         <h4>Источники клиентов</h4>
-        <ul>
+        <ul class="items-list">
           <li v-for="source in clients_sources" v-on:click="delSource(source.id)">{{ source.name }}</li>
         </ul>
         <div>
@@ -17,7 +17,7 @@
       </article>
       <article>
         <h4>Услуги</h4>
-        <ul>
+        <ul class="items-list">
           <li v-for="service in services" v-on:click="delService(service.id)">{{ service.name }}</li>
         </ul>
         <div>
@@ -102,6 +102,10 @@ export default {
 
 .account-right {
   padding: 10px;
+}
+
+.items-list {
+  cursor: pointer;
 }
 
 </style>
