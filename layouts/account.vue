@@ -27,6 +27,14 @@
         box-sizing: border-box;
         margin: 0;
     }
+    hr {
+      margin: 10px 0 10px 0;
+    }
+
+    h4 {
+      margin-top: 20px;
+    }
+
     .main {
       min-width: 310px;
     }

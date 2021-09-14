@@ -5,26 +5,38 @@
       <div id="content-header">
         <h3>Управление категориями</h3>
       </div>
-      <article>
-        <h4>Источники клиентов</h4>
-        <ul class="items-list">
-          <li v-for="source in clients_sources" v-on:click="delSource(source.id)">{{ source.name }}</li>
-        </ul>
-        <div>
-          <input type="text" value="" id="sourceModel" v-model.trim="sourceModel"/>
-          <button v-on:click="addSource">Добавить источник</button>
-        </div>
-      </article>
-      <article>
-        <h4>Услуги</h4>
-        <ul class="items-list">
-          <li v-for="service in services" v-on:click="delService(service.id)">{{ service.name }}</li>
-        </ul>
-        <div>
-          <input type="text" value="" id="serviceModel" v-model.trim="serviceModel"/>
-          <button v-on:click="addService">Добавить услугу</button>
-        </div>
-      </article>
+      <div class="categories-main">
+        <article>
+          <h4>Источники клиентов</h4>
+          <hr/>
+          <div>
+            <input type="text" value="" id="sourceModel" v-model.trim="sourceModel"/>
+            <button v-on:click="addSource">Добавить источник</button>
+          </div>
+          <hr/>
+          <Grid
+            :heroes="clientsSources"
+            :columns="sourceColumns"
+            :filter-key="searchQuery"
+            :methodsList="methodsList"
+          />
+        </article>
+        <article>
+          <h4>Услуги</h4>
+          <hr/>
+          <div>
+            <input type="text" value="" id="serviceModel" v-model.trim="serviceModel"/>
+            <button v-on:click="addService">Добавить услугу</button>
+          </div>
+          <hr/>
+          <Grid
+            :heroes="services"
+            :columns="serviceColumns"
+            :filter-key="searchQuery"
+            :methodsList="methodsServiceList"
+          />
+        </article>
+      </div>
     </div>
   </div>
 </template>
@@ -34,25 +46,33 @@ export default {
   layout: 'account',
   data: () => {
     return {
-      clients_sources: [],
+      searchQuery: "",
+      sourceColumns: ["Название", "method:Удалить:id:delSource"],
+      clientsSources: [],
+      methodsList: {},
+      serviceModel: "",
+
       services: [],
       sourceModel: "",
-      serviceModel: ""
+      serviceColumns: ["Название", "method:Удалить:id:delService"],
+      methodsServiceList: {},
     }
   },
   mounted() {
-    this.getCategories("clients_sources", this.clients_sources);
+    this.getCategories("clients_sources", this.clientsSources);
     this.getCategories("services", this.services);
+    this.methodsList["delSource"] = this.delSource;
+    this.methodsServiceList["delService"] = this.delService;
   },
   methods: {
     addSource() {
-      this.addCategory("clients_sources", this.clients_sources, this.sourceModel);
+      this.addCategory("clients_sources", this.clientsSources, this.sourceModel);
     },
     addService() {
       this.addCategory("services", this.services, this.serviceModel);
     },
     delSource(id) {
-      this.delCategory("clients_sources", this.clients_sources, id);
+      this.delCategory("clients_sources", this.clientsSources, id);
     },
     delService(id) {
       this.delCategory("services", this.services, id);
@@ -64,11 +84,25 @@ export default {
           return response.json()
         })
         .then((data) => {
-          if (model === self.clients_sources) {
-            self.clients_sources = data.results;
+
+          if (model === self.clientsSources) {
+            self.clientsSources = [];
+            for (let key in data.results) {
+              self.clientsSources.push({
+                "Название": data.results[key]["name"],
+                "id": data.results[key]["id"],
+              });
+            }
           }
+
           if (model === self.services) {
-            self.services = data.results;
+            self.services = [];
+            for (let key in data.results) {
+              self.services.push({
+                "Название": data.results[key]["name"],
+                "id": data.results[key]["id"],
+              });
+            }
 
           }
         })
@@ -96,6 +130,14 @@ export default {
 </script>
 
 <style>
+.categories-main {
+  display: flex;
+  justify-content: space-between;
+}
+
+.categories-main article{
+  width: 50%;
+}
 .account-content {
   display: flex;
 }
