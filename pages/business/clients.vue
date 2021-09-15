@@ -31,10 +31,19 @@
         <textarea v-model.trim="commentModel" placeholder="Комментарии"></textarea>
       </div>
       <div>
-      <select v-model.trim="sourceModel">
-        <option  value=""  disabled selected>Источник появления</option>
-        <option v-for="c in clients_sources" :value="c.id">{{ c.name }}</option>
-      </select>
+        <select v-model.trim="sourceModel">
+          <option  value=""  disabled selected>Источник появления</option>
+          <option v-for="c in clients_sources" :value="c.id">{{ c.name }}</option>
+        </select>
+      </div>
+      <div>
+        <input type="text" value="" v-model.trim="ageModel" placeholder="Возраст"/>
+      </div>
+      <div>
+        <input type="text" value="" v-model.trim="noteModel" placeholder="Оценка"/>
+      </div>
+      <div>
+        <DatePicker format="YYYY-MM-DD H:i:s" width="100%" v-model="dtAppearModel"></DatePicker>
       </div>
       <div class="button-block">
         <button v-on:click="addContent">Добавить клиента</button>
@@ -58,6 +67,15 @@
           <option v-for="c in clients_sources" :value="c.id">{{ c.name }}</option>
         </select>
       </div>
+      <div>
+        <input type="text" value="" v-model.trim="ageModel" placeholder="Возраст"/>
+      </div>
+      <div>
+        <input type="text" value="" v-model.trim="noteModel" placeholder="Оценка"/>
+      </div>
+      <div>
+        <DatePicker format="YYYY-MM-DD H:i:s" width="100%" v-model="dtAppearModel"></DatePicker>
+      </div>
       <div class="button-block">
         <button v-on:click="updateContent(idModel)">Редактировать клиента</button>
         <button v-on:click="toggleEditWin">Отмена</button>
@@ -76,7 +94,7 @@ export default {
       searchQuery: "",
       showPopUp: false,
       showEditPopUp: false,
-      clientsColumns: ["Имя", "Телефон", "Комментарий", "method:Удалить:id:delContent", "method:Редактировать:id:editToggleContent"],
+      clientsColumns: ["Имя", "Телефон", "Возраст", "Дата Связи", "Где Нашел", "Возраст", "Комментарий", "Оценка", "method:Удалить:id:delContent", "method:Редактировать:id:editToggleContent"],
       methodsList: {},
 
       clients: [],
@@ -85,7 +103,10 @@ export default {
       nameModel: "",
       phoneModel: "",
       commentModel: "",
-      sourceModel: "",
+      ageModel: 0,
+      dtAppearModel: "",
+      sourceModel: 0,
+      noteModel: 5,
       idModel: 0,
     }
   },
@@ -113,6 +134,10 @@ export default {
       this.nameModel = data["Имя"];
       this.phoneModel = data["Телефон"];
       this.commentModel = data["Комментарий"];
+      this.ageModel = data["Возраст"];
+      this.dtAppearModel = data["Дата Связи"];
+      this.sourceModel = data["category_id"];
+      this.noteModel = data["Оценка"];
       this.idModel = id;
       // this.sourceModel = data["Имя"];
       this.showEditPopUp = true;
@@ -126,12 +151,22 @@ export default {
         .then((data) => {
           self.clients = [];
           for (let key in data.results) {
-            self.clients.push({
+            let d = {
               "Имя": data.results[key]["name"],
               "Телефон": data.results[key]["phone"],
               "Комментарий": data.results[key]["comments"],
+              "Возраст": data.results[key]["age"],
+              "Оценка": data.results[key]["note"],
               "id": data.results[key]["id"],
-            });
+            }
+            if (data.results[key]["dt_appearance"]) {
+              d["Дата Связи"] = data.results[key]["dt_appearance"].replace("T", " ")
+            }
+            if (data.results[key]["category"]) {
+              d["Где Нашел"] = data.results[key]["category"]["name"]
+              d["category_id"] = data.results[key]["category"]["id"]
+            }
+            self.clients.push(d);
           }
         })
     },
@@ -143,7 +178,10 @@ export default {
           name: self.nameModel,
           phone: self.phoneModel,
           comments: self.commentModel,
-          source_id: self.sourceModel
+          category_id: self.sourceModel,
+          age: self.ageModel,
+          dt_appearance: self.dtAppearModel,
+          note: self.noteModel,
         })
       })
         .then((data) => {
@@ -159,7 +197,10 @@ export default {
           name: self.nameModel,
           phone: self.phoneModel,
           comments: self.commentModel,
-          source_id: self.sourceModel
+          category_id: self.sourceModel,
+          age: self.ageModel,
+          dt_appearance: self.dtAppearModel,
+          note: self.noteModel,
         })
       })
         .then((data) => {

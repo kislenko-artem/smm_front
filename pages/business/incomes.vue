@@ -37,10 +37,13 @@
         <input type="text" value="" v-model.trim="priceModel" placeholder="Стоимость"/>
       </div>
       <div>
+        <input type="text" value="" v-model.trim="durationModel" placeholder="Продолжительность"/>
+      </div>
+      <div>
         <textarea v-model.trim="commentModel" placeholder="Комментарии"></textarea>
       </div>
       <div>
-        <DatePicker format="DD-MM-YYYY H:i:s" width="100%" v-model="dtProvisionModel"></DatePicker>
+        <DatePicker format="YYYY-MM-DD H:i:s" width="100%" v-model="dtProvisionModel"></DatePicker>
       </div>
       <div class="button-block">
         <button v-on:click="addContent">Добавить</button>
@@ -65,10 +68,13 @@
         <input type="text" value="" v-model.trim="priceModel" placeholder="Стоимость"/>
       </div>
       <div>
+        <input type="text" value="" v-model.trim="durationModel" placeholder="Продолжительность"/>
+      </div>
+      <div>
         <textarea v-model.trim="commentModel" placeholder="Комментарии"></textarea>
       </div>
       <div>
-        <DatePicker format="DD-MM-YYYY H:i:s" width="100%" v-model="dtProvisionModel"></DatePicker>
+        <DatePicker format="YYYY-MM-DD H:i:s" width="100%" v-model="dtProvisionModel"></DatePicker>
       </div>
       <div class="button-block">
         <button v-on:click="updateContent(idModel)">Редактировать</button>
@@ -88,7 +94,7 @@ export default {
       searchQuery: "",
       showPopUp: false,
       showEditPopUp: false,
-      clientsColumns: ["Услуга",  "Стоимость", "Комментарий", "Клиент", "Дата оказания", "method:Удалить:id:delContent", "method:Редактировать:id:editToggleContent"],
+      clientsColumns: ["Услуга",  "Стоимость", "Комментарий", "Клиент", "Дата оказания", "Продолжительность", "method:Удалить:id:delContent", "method:Редактировать:id:editToggleContent"],
       methodsList: {},
 
       clients: [],
@@ -99,6 +105,7 @@ export default {
       commentModel: "",
       clientModel: 0,
       serviceModel: 0,
+      durationModel: 2,
       dtProvisionModel: "",
       idModel: 0,
     }
@@ -125,12 +132,12 @@ export default {
         data = this.clients[key];
         break
       }
-      this.nameModel = data["Название"];
       this.priceModel = data["Стоимость"];
       this.clientModel = data["client_id"];
       this.serviceModel = data["category_id"];
       this.commentModel = data["Комментарий"];
       this.dtProvisionModel = data["Дата оказания"];
+      this.durationModel = data["Продолжительность"];
       this.idModel = id;
       // this.sourceModel = data["Имя"];
       this.showEditPopUp = true;
@@ -144,17 +151,23 @@ export default {
         .then((data) => {
           self.clients = [];
           for (let key in data.results) {
-            self.clients.push({
-              "Название": data.results[key]["name"],
+            let d = {
               "Стоимость": data.results[key]["price"],
-              "Клиент": data.results[key]["client"]["name"],
               "Услуга": data.results[key]["category"]["name"],
               "Комментарий": data.results[key]["comments"],
-              "Дата оказания": data.results[key]["dt_provision"],
+              "Продолжительность": data.results[key]["duration"],
               "id": data.results[key]["id"],
               "category_id": data.results[key]["category"]["id"],
-              "client_id": data.results[key]["client"]["id"],
-            });
+            }
+            if (data.results[key]["dt_provision"]) {
+              d["Дата оказания"] = data.results[key]["dt_provision"].replace("T", " ")
+            }
+            if (data.results[key]["client"]) {
+              d["Клиент"] = data.results[key]["client"]["name"]
+              d["client_id"] = data.results[key]["client"]["id"]
+            }
+
+            self.clients.push(d);
           }
         })
     },
@@ -163,12 +176,12 @@ export default {
       fetch(process.env.baseUrl + "/v0/business/incomes/", {
         method: 'POST',
         body: JSON.stringify({
-          name: "",
           price: self.priceModel,
           comments: self.commentModel,
           category_id: parseInt(self.serviceModel),
           client_id: parseInt(self.clientModel),
-          dt_provision: self.dtProvisionModel
+          dt_provision: self.dtProvisionModel,
+          duration: self.durationModel
         })
       })
         .then((data) => {
@@ -181,12 +194,12 @@ export default {
       fetch(process.env.baseUrl + "/v0/business/incomes/" + id, {
         method: 'PUT',
         body: JSON.stringify({
-          name: self.nameModel,
           price: self.priceModel,
           comments: self.commentModel,
           category_id: parseInt(self.serviceModel),
           client_id: parseInt(self.clientModel),
-          dt_provision: self.dtProvisionModel
+          dt_provision: self.dtProvisionModel,
+          duration: self.durationModel
         })
       })
         .then((data) => {
