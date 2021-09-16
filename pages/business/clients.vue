@@ -247,7 +247,7 @@ export default {
 }
 
 .pop-up {
-  top: 50%;
+  top: 5%;
   margin: -200px auto;
   position: fixed;
   border: 1px solid black;
