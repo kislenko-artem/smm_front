@@ -1,5 +1,5 @@
 <template>
-  <table>
+  <table :class="className">
     <thead>
     <tr>
       <th v-for="key in columns"
@@ -27,7 +27,8 @@ export default {
     heroes: Array,
     columns: Array,
     methodsList: Object,
-    filterKey: String
+    filterKey: String,
+    className: String
   },
   data: function () {
     var sortOrders = {};
@@ -117,7 +118,7 @@ td {
 
 th,
 td {
-  min-width: 120px;
+  min-width: 110px;
   padding: 5px 5px;
   font-size: 12px;
 }

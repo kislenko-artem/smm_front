@@ -42,7 +42,6 @@ export default {
   },
   methods: {
     toggleMenu() {
-      console.log(this.isActive)
       this.isActive = !this.isActive;
     }
   }

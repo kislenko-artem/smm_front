@@ -220,6 +220,10 @@
         padding-bottom: 10px;
     }
 
+    .manage-data {
+      display: flex;
+    }
+
     @media screen and (max-width: 980px) {
       .account-sidebar {
         position: absolute;

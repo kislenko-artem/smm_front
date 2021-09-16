@@ -9,7 +9,7 @@
         <article>
           <h4>Источники клиентов</h4>
           <hr/>
-          <div>
+          <div class="manage-data">
             <input type="text" value="" id="sourceModel" v-model.trim="sourceModel"/>
             <button v-on:click="addSource">Добавить источник</button>
           </div>
@@ -24,7 +24,7 @@
         <article>
           <h4>Услуги</h4>
           <hr/>
-          <div>
+          <div class="manage-data">
             <input type="text" value="" id="serviceModel" v-model.trim="serviceModel"/>
             <button v-on:click="addService">Добавить услугу</button>
           </div>
@@ -135,6 +135,7 @@ export default {
 .categories-main {
   display: flex;
   justify-content: space-between;
+  flex-wrap: wrap;
 }
 
 .categories-main article{
@@ -150,6 +151,12 @@ export default {
 
 .items-list {
   cursor: pointer;
+}
+
+@media screen and (max-width: 450px) {
+  .categories-main article {
+    width: 100%;
+  }
 }
 
 </style>

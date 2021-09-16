@@ -8,14 +8,17 @@
       <article>
         <h4>Список клиентов</h4>
         <hr/>
-        <input type="text" v-model.trim="searchQuery" placeholder="Фильтр..."/>
-        <button v-on:click="toggleWin">Добавить клиента</button>
+        <div class="manage-data">
+          <input type="text" v-model.trim="searchQuery" placeholder="Фильтр..."/>
+          <button v-on:click="toggleWin">Добавить</button>
+        </div>
         <hr/>
         <Grid
           :heroes="clients"
           :columns="clientsColumns"
           :filter-key="searchQuery"
           :methodsList="methodsList"
+          className="clients-table"
         />
       </article>
     </div>
@@ -46,7 +49,7 @@
         <DatePicker format="YYYY-MM-DD H:i:s" width="100%" v-model="dtAppearModel"></DatePicker>
       </div>
       <div class="button-block">
-        <button v-on:click="addContent">Добавить клиента</button>
+        <button v-on:click="addContent">Добавить</button>
         <button v-on:click="toggleWin">Отмена</button>
       </div>
     </div>
@@ -77,8 +80,36 @@
         <DatePicker format="YYYY-MM-DD H:i:s" width="100%" v-model="dtAppearModel"></DatePicker>
       </div>
       <div class="button-block">
-        <button v-on:click="updateContent(idModel)">Редактировать клиента</button>
+        <button v-on:click="updateContent(idModel)">Сохранить</button>
         <button v-on:click="toggleEditWin">Отмена</button>
+      </div>
+    </div>
+
+    <div class="pop-up" v-if="showShowPopUp">
+      <div class="show-element">
+        <span>Имя:</span><span>{{ nameModel }}</span>
+      </div>
+      <div class="show-element">
+        <span>Телефон:</span><span>{{ phoneModel }}</span>
+      </div>
+      <div class="show-element">
+        <span>Комментарий:</span><span>{{ commentModel }}</span>
+      </div>
+      <div class="show-element">
+        <span>Оценка:</span><span>{{ noteModel }}</span>
+      </div>
+      <div class="show-element">
+        <span>Откуда:</span><span>{{ sourceModel }}</span>
+      </div>
+      <div class="show-element">
+        <span>Возраст:</span><span>{{ ageModel }}</span>
+      </div>
+      <div class="show-element">
+        <span>Дата появления:</span><span>{{ dtAppearModel }}</span>
+      </div>
+      <div class="button-block">
+        <button v-on:click="toggleEditWin">Редактировать</button>
+        <button v-on:click="toggleShowWin">Отмена</button>
       </div>
     </div>
 
@@ -92,9 +123,13 @@ export default {
   data: () => {
     return {
       searchQuery: "",
+
       showPopUp: false,
       showEditPopUp: false,
-      clientsColumns: ["Имя", "Телефон", "Возраст", "Дата Связи", "Где Нашел", "Возраст", "Комментарий", "Оценка", "method:Удалить:id:delContent", "method:Редактировать:id:editToggleContent"],
+      showShowPopUp: false,
+
+      clientsColumns: ["Имя", "Телефон", "Возраст", "Дата Связи", "Где Нашел", "Возраст", "Комментарий", "Оценка",
+        "method:Удалить:id:delContent", "method:Редактировать:id:editToggleContent", "method:Посмотреть:id:showToggleContent"],
       methodsList: {},
 
       clients: [],
@@ -113,16 +148,24 @@ export default {
   mounted() {
     this.getContent();
     this.getCategories();
-    this.methodsList = {"delContent": this.delContent, "editToggleContent": this.editToggleContent};
+    this.methodsList = {"delContent": this.delContent, "editToggleContent": this.editToggleContent, "showToggleContent": this.showToggleContent};
   },
   methods: {
     toggleWin() {
       this.showPopUp = !this.showPopUp;
     },
     toggleEditWin() {
+      this.showShowPopUp = false;
       this.showEditPopUp = !this.showEditPopUp;
     },
-    editToggleContent(id) {
+    toggleShowWin() {
+      this.showShowPopUp = !this.showShowPopUp;
+    },
+    showToggleContent(id) {
+      this.fillModels(id);
+      this.toggleShowWin();
+    },
+    fillModels(id) {
       let data = {};
       for (let key in this.clients) {
         if (this.clients[key]["id"] != id) {
@@ -139,7 +182,9 @@ export default {
       this.sourceModel = data["category_id"];
       this.noteModel = data["Оценка"];
       this.idModel = id;
-      // this.sourceModel = data["Имя"];
+    },
+    editToggleContent(id) {
+      this.fillModels(id);
       this.showEditPopUp = true;
     },
     getContent() {
@@ -274,6 +319,71 @@ export default {
   width: 100%;
   height: 100px;
   resize: none;
+}
+@media screen and (max-width: 450px) {
+  .clients-table th:nth-child(2) {
+    display: none;
+  }
+
+  .clients-table td:nth-child(2) {
+    display: none;
+  }
+
+  .clients-table th:nth-child(3) {
+    display: none;
+  }
+
+  .clients-table td:nth-child(3) {
+    display: none;
+  }
+
+  .clients-table th:nth-child(4) {
+    display: none;
+  }
+
+  .clients-table td:nth-child(4) {
+    display: none;
+  }
+
+  .clients-table th:nth-child(5) {
+    display: none;
+  }
+
+  .clients-table td:nth-child(5) {
+    display: none;
+  }
+
+  .clients-table th:nth-child(6) {
+    display: none;
+  }
+
+  .clients-table td:nth-child(6) {
+    display: none;
+  }
+
+  .clients-table th:nth-child(7) {
+    display: none;
+  }
+
+  .clients-table td:nth-child(7) {
+    display: none;
+  }
+
+  .clients-table th:nth-child(8) {
+    display: none;
+  }
+
+  .clients-table td:nth-child(8) {
+    display: none;
+  }
+
+  .clients-table th:nth-child(10) {
+    display: none;
+  }
+
+  .clients-table td:nth-child(10) {
+    display: none;
+  }
 }
 
 </style>

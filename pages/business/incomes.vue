@@ -8,14 +8,17 @@
       <article>
         <h4>Список</h4>
         <hr/>
-        <input type="text" v-model.trim="searchQuery" placeholder="Фильтр..."/>
-        <button v-on:click="toggleWin">Добавить поступление</button>
+        <div class="manage-data">
+          <input type="text" v-model.trim="searchQuery" placeholder="Фильтр..."/>
+          <button v-on:click="toggleWin">Добавить</button>
+        </div>
         <hr/>
         <Grid
           :heroes="clients"
           :columns="clientsColumns"
           :filter-key="searchQuery"
           :methodsList="methodsList"
+          className="income-table"
         />
       </article>
     </div>
@@ -77,8 +80,33 @@
         <DatePicker format="YYYY-MM-DD H:i:s" width="100%" v-model="dtProvisionModel"></DatePicker>
       </div>
       <div class="button-block">
-        <button v-on:click="updateContent(idModel)">Редактировать</button>
+        <button v-on:click="updateContent(idModel)">Сохранить</button>
         <button v-on:click="toggleEditWin">Отмена</button>
+      </div>
+    </div>
+
+    <div class="pop-up" v-if="showShowPopUp">
+      <div class="show-element">
+        <span>Название:</span><span>{{ serviceModel }}</span>
+      </div>
+      <div class="show-element">
+        <span>Цена:</span><span>{{ priceModel }}</span>
+      </div>
+      <div class="show-element">
+        <span>Комментарий:</span><span>{{ commentModel }}</span>
+      </div>
+      <div class="show-element">
+        <span>Клиент:</span><span>{{ clientModel }}</span>
+      </div>
+      <div class="show-element">
+        <span>Продолжительность:</span><span>{{ durationModel }}</span>
+      </div>
+      <div class="show-element">
+        <span>Дата:</span><span>{{ dtProvisionModel }}</span>
+      </div>
+      <div class="button-block">
+        <button v-on:click="toggleEditWin">Редактировать</button>
+        <button v-on:click="toggleShowWin">Отмена</button>
       </div>
     </div>
 
@@ -92,9 +120,13 @@ export default {
   data: () => {
     return {
       searchQuery: "",
+
       showPopUp: false,
       showEditPopUp: false,
-      clientsColumns: ["Услуга",  "Стоимость", "Комментарий", "Клиент", "Дата оказания", "Продолжительность", "method:Удалить:id:delContent", "method:Редактировать:id:editToggleContent"],
+      showShowPopUp: false,
+
+      clientsColumns: ["Услуга",  "Стоимость", "Комментарий", "Клиент", "Дата оказания", "Продолжительность",
+        "method:Удалить:id:delContent", "method:Редактировать:id:editToggleContent", "method:Посмотреть:id:showToggleContent"],
       methodsList: {},
 
       clients: [],
@@ -114,16 +146,25 @@ export default {
     this.getContent();
     this.getServices();
     this.getClients();
-    this.methodsList = {"delContent": this.delContent, "editToggleContent": this.editToggleContent};
+    this.methodsList = {"delContent": this.delContent, "editToggleContent": this.editToggleContent, "showToggleContent": this.showToggleContent};
   },
   methods: {
     toggleWin() {
       this.showPopUp = !this.showPopUp;
     },
     toggleEditWin() {
+      this.showShowPopUp = false;
       this.showEditPopUp = !this.showEditPopUp;
     },
-    editToggleContent(id) {
+    toggleShowWin() {
+      this.showShowPopUp = !this.showShowPopUp;
+    },
+    showToggleContent(id) {
+      this.fillModels(id);
+      this.toggleShowWin();
+
+    },
+    fillModels(id) {
       let data = {};
       for (let key in this.clients) {
         if (this.clients[key]["id"] != id) {
@@ -139,7 +180,9 @@ export default {
       this.dtProvisionModel = data["Дата оказания"];
       this.durationModel = data["Продолжительность"];
       this.idModel = id;
-      // this.sourceModel = data["Имя"];
+    },
+    editToggleContent(id) {
+      this.fillModels(id);
       this.showEditPopUp = true;
     },
     getContent() {
@@ -283,6 +326,55 @@ export default {
   width: 100%;
   height: 100px;
   resize: none;
+}
+@media screen and (max-width: 450px) {
+  .income-table  th:nth-child(2) {
+    display: none;
+  }
+
+  .income-table  td:nth-child(2) {
+    display: none;
+  }
+
+  .income-table  th:nth-child(3) {
+    display: none;
+  }
+
+  .income-table  td:nth-child(3) {
+    display: none;
+  }
+
+  .income-table  th:nth-child(4) {
+    display: none;
+  }
+
+  .income-table  td:nth-child(4) {
+    display: none;
+  }
+
+  .income-table  th:nth-child(5) {
+    display: none;
+  }
+
+  .income-table  td:nth-child(5) {
+    display: none;
+  }
+
+  .income-table  th:nth-child(6) {
+    display: none;
+  }
+
+  .income-table  td:nth-child(6) {
+    display: none;
+  }
+
+  .income-table  th:nth-child(8) {
+    display: none;
+  }
+
+  .income-table td:nth-child(8) {
+    display: none;
+  }
 }
 
 </style>

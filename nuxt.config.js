@@ -44,6 +44,6 @@ export default {
 
   env: {
     // baseUrl: process.env.BASE_URL || 'http://localhost:9999'
-    baseUrl: process.env.BASE_URL || 'http://webart-tech.ru:9999'
+    baseUrl: process.env.BASE_URL || 'http://webart-tech.ru'
   }
 }
