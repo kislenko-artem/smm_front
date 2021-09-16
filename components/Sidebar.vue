@@ -11,7 +11,7 @@
           <NuxtLink to="/business/clients">Клиенты</NuxtLink>
         </li>
         <li>
-          <NuxtLink to="/business/incomes">Поступления</NuxtLink>
+          <NuxtLink to="/business/incomes">Операции</NuxtLink>
         </li>
         <li>
           <NuxtLink to="/business/analize">Аналитика</NuxtLink>

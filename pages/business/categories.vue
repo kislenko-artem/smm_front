@@ -112,8 +112,10 @@ export default {
       fetch(process.env.baseUrl + "/v0/business/categories/", {
         method: 'POST',
         body: JSON.stringify({name: name, category_type: alias})
-      });
-      this.getCategories(alias, model);
+      })
+        .then((data) => {
+          self.getCategories(alias, model);
+        });
     },
     delCategory(alias, model, id) {
       const self = this;
