@@ -222,6 +222,24 @@
 
     .manage-data {
       display: flex;
+      flex-wrap: wrap;
+    }
+
+    .manage-data .datetime-picker {
+      margin: 5px;
+    }
+
+    .manage-data .income-filter {
+      margin: 5px;
+      display: block;
+      height: 30px;
+      width: 226px;
+      border: 1px solid #ddd;
+      padding: 3px;
+    }
+
+    .manage-data .buttons {
+      padding: 7px 0;
     }
 
     @media screen and (max-width: 980px) {

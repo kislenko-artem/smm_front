@@ -16,10 +16,85 @@ export default {
   data: () => {
     return {
       search: "",
-      items: []
+      clientsSources: [],
+      services: [],
+      types: [],
+      clients: [],
+      operations: [],
     }
   },
-  methods: {  }
+  mounted() {
+    this.getCategories("clients_sources", this.clientsSources);
+    this.getCategories("services", this.services);
+    this.getCategories("types", this.types);
+    this.getOperations();
+    this.getClients();
+
+  },
+  methods: {
+    getOperations() {
+      const self = this;
+      fetch(process.env.baseUrl + "/v0/business/incomes/")
+        .then((response) => {
+          return response.json()
+        })
+        .then((data) => {
+          self.operations = data.results;
+        })
+    },
+    getClients() {
+      const self = this;
+      fetch(process.env.baseUrl + "/v0/business/clients/")
+        .then((response) => {
+          return response.json()
+        })
+        .then((data) => {
+          self.clients = data.results;
+        })
+    },
+    getCategories(alias, model) {
+      const self = this;
+      fetch(process.env.baseUrl + "/v0/business/categories/" + alias)
+        .then((response) => {
+          return response.json()
+        })
+        .then((data) => {
+
+          if (model === self.clientsSources) {
+            self.clientsSources = [];
+            for (let key in data.results) {
+              self.clientsSources.push({
+                "Название": data.results[key]["name"],
+                "id": data.results[key]["id"],
+              });
+            }
+          }
+
+          if (model === self.services) {
+            self.services = [];
+            for (let key in data.results) {
+              self.services.push({
+                "Название": data.results[key]["name"],
+                "id": data.results[key]["id"],
+              });
+            }
+          }
+
+          if (model === self.types) {
+            self.types = [];
+            for (let key in data.results) {
+              self.types.push({
+                "Название": data.results[key]["name"],
+                "id": data.results[key]["id"],
+              });
+            }
+          }
+
+
+
+        })
+    },
+  }
 }
 </script>
 

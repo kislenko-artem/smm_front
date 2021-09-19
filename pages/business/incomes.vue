@@ -9,8 +9,13 @@
         <h4>Список</h4>
         <hr/>
         <div class="manage-data">
-          <input type="text" v-model.trim="searchQuery" placeholder="Фильтр..."/>
-          <button v-on:click="toggleWin">Добавить</button>
+          <input type="text" v-model.trim="searchQuery" placeholder="Фильтр..." class="income-filter"/>
+          <DatePicker format="YYYY-MM-DD" v-model="dtStartModel"></DatePicker>
+          <DatePicker format="YYYY-MM-DD" v-model="dtEndModel"></DatePicker>
+          <div class="buttons">
+            <button v-on:click="getContent">Обновить</button>
+            <button v-on:click="toggleWin">Добавить</button>
+          </div>
         </div>
         <hr/>
         <Grid
@@ -20,6 +25,11 @@
           :methodsList="methodsList"
           className="income-table"
         />
+        <div class="outcomes">
+          <div><span>Доходы: </span><span>{{incomeModel}}</span></div>
+          <div><span>Расходы: </span><span>{{expensesModel}}</span></div>
+          <div><span>Прибыль: </span><span>{{profitModel}}</span></div>
+        </div>
       </article>
     </div>
 
@@ -120,6 +130,11 @@ export default {
   data: () => {
     return {
       searchQuery: "",
+      dtStartModel: "",
+      dtEndModel: "",
+      incomeModel: 0,
+      expensesModel: 0,
+      profitModel: 0,
 
       showPopUp: false,
       showEditPopUp: false,
@@ -187,13 +202,29 @@ export default {
     },
     getContent() {
       const self = this;
-      fetch(process.env.baseUrl + "/v0/business/incomes/")
+      let url = "/v0/business/incomes/?";
+      if (this.dtStartModel) {
+        url += "&dt_start=" + this.dtStartModel +"T00:00:00"
+      }
+      if (this.dtEndModel) {
+        url += "&dt_end=" + this.dtEndModel +"T00:00:00"
+      }
+      fetch(process.env.baseUrl + url)
         .then((response) => {
           return response.json()
         })
         .then((data) => {
+          self.incomeModel = 0;
+          self.expensesModel = 0;
+          self.profitModel = 0;
           self.clients = [];
           for (let key in data.results) {
+            if (data.results[key]["price"] > 0) {
+              self.incomeModel += parseFloat(data.results[key]["price"]);
+            } else {
+              self.expensesModel += parseFloat(data.results[key]["price"]);
+            }
+            self.profitModel += parseFloat(data.results[key]["price"]);
             let d = {
               "Стоимость": data.results[key]["price"],
               "Услуга": data.results[key]["category"]["name"],
@@ -327,6 +358,24 @@ export default {
   height: 100px;
   resize: none;
 }
+
+.outcomes {
+  margin: 20px 0 0 0;
+  width: 300px;
+}
+
+.outcomes div {
+  border-bottom: 1px solid black;
+  display: flex;
+  justify-content: space-between;
+}
+
+.outcomes div span:first-child{
+  font-weight: bold;
+  display: block;
+  width: 30px;
+}
+
 @media screen and (max-width: 450px) {
   .income-table  th:nth-child(2) {
     display: none;

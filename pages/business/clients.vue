@@ -40,6 +40,12 @@
         </select>
       </div>
       <div>
+        <select v-model.trim="typeModel">
+          <option  value=""  disabled selected>Тип</option>
+          <option v-for="c in clients_types" :value="c.id">{{ c.name }}</option>
+        </select>
+      </div>
+      <div>
         <input type="text" value="" v-model.trim="ageModel" placeholder="Возраст"/>
       </div>
       <div>
@@ -68,6 +74,12 @@
         <select v-model.trim="sourceModel">
           <option  value=""  disabled selected>Источник появления</option>
           <option v-for="c in clients_sources" :value="c.id">{{ c.name }}</option>
+        </select>
+      </div>
+      <div>
+        <select v-model.trim="typeModel">
+          <option  value=""  disabled selected>Тип</option>
+          <option v-for="c in clients_types" :value="c.id">{{ c.name }}</option>
         </select>
       </div>
       <div>
@@ -102,6 +114,9 @@
         <span>Откуда:</span><span>{{ sourceModel }}</span>
       </div>
       <div class="show-element">
+        <span>Тип:</span><span>{{ typeModel }}</span>
+      </div>
+      <div class="show-element">
         <span>Возраст:</span><span>{{ ageModel }}</span>
       </div>
       <div class="show-element">
@@ -128,12 +143,13 @@ export default {
       showEditPopUp: false,
       showShowPopUp: false,
 
-      clientsColumns: ["Имя", "Телефон", "Возраст", "Дата Связи", "Где Нашел", "Возраст", "Комментарий", "Оценка",
+      clientsColumns: ["Имя", "Телефон", "Возраст", "Дата Связи", "Откуда", "Тип", "Возраст", "Комментарий", "Оценка",
         "method:Удалить:id:delContent", "method:Редактировать:id:editToggleContent", "method:Посмотреть:id:showToggleContent"],
       methodsList: {},
 
       clients: [],
       clients_sources: [],
+      clients_types: [],
 
       nameModel: "",
       phoneModel: "",
@@ -141,13 +157,15 @@ export default {
       ageModel: 0,
       dtAppearModel: "",
       sourceModel: 0,
+      typeModel: 0,
       noteModel: 5,
       idModel: 0,
     }
   },
   mounted() {
-    this.getContent();
     this.getCategories();
+    this.getTypes();
+    this.getContent();
     this.methodsList = {"delContent": this.delContent, "editToggleContent": this.editToggleContent, "showToggleContent": this.showToggleContent};
   },
   methods: {
@@ -180,6 +198,7 @@ export default {
       this.ageModel = data["Возраст"];
       this.dtAppearModel = data["Дата Связи"];
       this.sourceModel = data["category_id"];
+      this.typeModel = data["type_client"];
       this.noteModel = data["Оценка"];
       this.idModel = id;
     },
@@ -208,8 +227,12 @@ export default {
               d["Дата Связи"] = data.results[key]["dt_appearance"].replace("T", " ")
             }
             if (data.results[key]["category"]) {
-              d["Где Нашел"] = data.results[key]["category"]["name"]
+              d["Откуда"] = data.results[key]["category"]["name"]
               d["category_id"] = data.results[key]["category"]["id"]
+            }
+            if (data.results[key]["type_client"]) {
+              d["Тип"] = data.results[key]["type_client"]["name"]
+              d["type_id"] = data.results[key]["type_client"]["id"]
             }
             self.clients.push(d);
           }
@@ -224,6 +247,7 @@ export default {
           phone: self.phoneModel,
           comments: self.commentModel,
           category_id: self.sourceModel,
+          type_client_id: self.typeModel,
           age: self.ageModel,
           dt_appearance: self.dtAppearModel,
           note: self.noteModel,
@@ -243,6 +267,7 @@ export default {
           phone: self.phoneModel,
           comments: self.commentModel,
           category_id: self.sourceModel,
+          type_client_id: self.typeModel,
           age: self.ageModel,
           dt_appearance: self.dtAppearModel,
           note: self.noteModel,
@@ -272,6 +297,17 @@ export default {
         })
         .then((data) => {
             self.clients_sources = data.results;
+        })
+    },
+    getTypes() {
+      const alias = "types";
+      const self = this;
+      fetch(process.env.baseUrl + "/v0/business/categories/" + alias)
+        .then((response) => {
+          return response.json()
+        })
+        .then((data) => {
+          self.clients_types = data.results;
         })
     },
   }

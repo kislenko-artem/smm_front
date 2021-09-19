@@ -36,6 +36,21 @@
             :methodsList="methodsServiceList"
           />
         </article>
+        <article>
+          <h4>Типы клиентов</h4>
+          <hr/>
+          <div class="manage-data">
+            <input type="text" value="" id="typeModel" v-model.trim="typeModel"/>
+            <button v-on:click="addType">Добавить тип</button>
+          </div>
+          <hr/>
+          <Grid
+            :heroes="types"
+            :columns="typeColumns"
+            :filter-key="searchQuery"
+            :methodsList="methodsTypeList"
+          />
+        </article>
       </div>
     </div>
   </div>
@@ -56,13 +71,20 @@ export default {
       sourceModel: "",
       serviceColumns: ["Название", "method:Удалить:id:delService"],
       methodsServiceList: {},
+
+      types: [],
+      typeModel: "",
+      typeColumns: ["Название", "method:Удалить:id:delType"],
+      methodsTypeList: {},
     }
   },
   mounted() {
     this.getCategories("clients_sources", this.clientsSources);
     this.getCategories("services", this.services);
+    this.getCategories("types", this.types);
     this.methodsList["delSource"] = this.delSource;
     this.methodsServiceList["delService"] = this.delService;
+    this.methodsTypeList["delType"] = this.delType;
   },
   methods: {
     addSource() {
@@ -71,12 +93,20 @@ export default {
     addService() {
       this.addCategory("services", this.services, this.serviceModel);
     },
+    addType() {
+      this.addCategory("types", this.types, this.typeModel);
+    },
+
     delSource(id) {
       this.delCategory("clients_sources", this.clientsSources, id);
     },
     delService(id) {
       this.delCategory("services", this.services, id);
     },
+    delType(id) {
+      this.delCategory("types", this.types, id);
+    },
+
     getCategories(alias, model) {
       const self = this;
       fetch(process.env.baseUrl + "/v0/business/categories/" + alias)
@@ -103,8 +133,20 @@ export default {
                 "id": data.results[key]["id"],
               });
             }
-
           }
+
+          if (model === self.types) {
+            self.types = [];
+            for (let key in data.results) {
+              self.types.push({
+                "Название": data.results[key]["name"],
+                "id": data.results[key]["id"],
+              });
+            }
+          }
+
+
+
         })
     },
     addCategory(alias, model, name) {
