@@ -232,7 +232,7 @@ export default {
             }
             if (data.results[key]["type_client"]) {
               d["Тип"] = data.results[key]["type_client"]["name"]
-              d["type_id"] = data.results[key]["type_client"]["id"]
+              d["type_client"] = data.results[key]["type_client"]["id"]
             }
             self.clients.push(d);
           }
