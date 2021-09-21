@@ -141,7 +141,7 @@ export default {
       showShowPopUp: false,
 
       clientsColumns: ["Услуга",  "Стоимость", "Комментарий", "Клиент", "Дата оказания", "Продолжительность",
-        "method:Удалить:id:delContent", "method:Редактировать:id:editToggleContent", "method:Посмотреть:id:showToggleContent"],
+        "method:Удл.:id:delContent", "method:Ред.:id:editToggleContent", "method:Посм.:id:showToggleContent"],
       methodsList: {},
 
       clients: [],
@@ -377,13 +377,6 @@ export default {
 }
 
 @media screen and (max-width: 450px) {
-  .income-table  th:nth-child(2) {
-    display: none;
-  }
-
-  .income-table  td:nth-child(2) {
-    display: none;
-  }
 
   .income-table  th:nth-child(3) {
     display: none;

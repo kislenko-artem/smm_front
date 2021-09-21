@@ -154,7 +154,7 @@ export default {
       showShowPopUp: false,
 
       clientsColumns: ["Имя", "Телефон", "Возраст", "Дата Связи", "Откуда", "Тип", "Возраст", "Комментарий", "Оценка",
-        "method:Удалить:id:delContent", "method:Редактировать:id:editToggleContent", "method:Посмотреть:id:showToggleContent"],
+        "method:Удл.:id:delContent", "method:Ред.:id:editToggleContent", "method:Посм.:id:showToggleContent"],
       incomesColumns: ["Услуга",  "Стоимость", "Комментарий", "Дата оказания"],
       methodsList: {},
 
