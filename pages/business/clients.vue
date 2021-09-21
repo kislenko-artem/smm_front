@@ -396,7 +396,7 @@ export default {
   border: 1px solid black;
   background: #ddd;
   padding: 20px 5px 10px 5px;
-  width: 350px;
+  width: 300px;
 }
 
 .pop-up > div {

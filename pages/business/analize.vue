@@ -192,12 +192,17 @@ export default {
 .account-right {
   padding: 10px;
 }
-.chart-item, .chart-item-line {
+.chart-item {
   width: 100%;
   display: flex;
   justify-content: space-between;
   flex-wrap: wrap;
 }
+
+.chart-item-line {
+  width: 100%;
+}
+
 .chart-item div {
   width: 50%;
 }
