@@ -201,4 +201,10 @@ export default {
 .chart-item div {
   width: 50%;
 }
+@media screen and (max-width: 450px) {
+  .chart-item div {
+    width: 100%;
+  }
+}
+
 </style>
