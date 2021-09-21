@@ -28,7 +28,7 @@
         </div>
       </div>
 
-      <div class="chart-item" v-if="readyOperation">
+      <div class="chart-item-line" v-if="readyOperation">
         <h4>График доходов\расходов</h4>
         <LineChart :data="operationsChart"></LineChart>
       </div>
@@ -192,7 +192,7 @@ export default {
 .account-right {
   padding: 10px;
 }
-.chart-item {
+.chart-item, .chart-item-line {
   width: 100%;
   display: flex;
   justify-content: space-between;
