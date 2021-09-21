@@ -1,5 +1,5 @@
 <template>
-  <table :class="className">
+  <table :class="className" v-if="isShow">
     <thead>
     <tr>
       <th v-for="key in columns"
@@ -37,10 +37,13 @@ export default {
     });
     return {
       sortKey: "",
-      sortOrders: sortOrders
+      sortOrders: sortOrders,
     };
   },
   computed: {
+    isShow: function () {
+      return this.heroes.length > 0;
+    },
     filteredHeroes: function () {
       var sortKey = this.sortKey;
       var filterKey = this.filterKey && this.filterKey.toLowerCase();
@@ -118,7 +121,7 @@ td {
 
 th,
 td {
-  min-width: 110px;
+  min-width: 50px;
   padding: 5px 5px;
   font-size: 12px;
 }

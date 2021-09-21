@@ -126,6 +126,16 @@
         <button v-on:click="toggleEditWin">Редактировать</button>
         <button v-on:click="toggleShowWin">Отмена</button>
       </div>
+
+      <div class="client-incomes">
+        <Grid
+          :heroes="incomesByID()"
+          :columns="incomesColumns"
+          :filter-key="searchQuery"
+          :methodsList="methodsList"
+          className="client-income-table"
+        />
+      </div>
     </div>
 
 
@@ -145,9 +155,11 @@ export default {
 
       clientsColumns: ["Имя", "Телефон", "Возраст", "Дата Связи", "Откуда", "Тип", "Возраст", "Комментарий", "Оценка",
         "method:Удалить:id:delContent", "method:Редактировать:id:editToggleContent", "method:Посмотреть:id:showToggleContent"],
+      incomesColumns: ["Услуга",  "Стоимость", "Комментарий", "Дата оказания"],
       methodsList: {},
 
       clients: [],
+      incomes: [],
       clients_sources: [],
       clients_types: [],
 
@@ -166,6 +178,7 @@ export default {
     this.getCategories();
     this.getTypes();
     this.getContent();
+    this.getIncomes();
     this.methodsList = {"delContent": this.delContent, "editToggleContent": this.editToggleContent, "showToggleContent": this.showToggleContent};
   },
   methods: {
@@ -182,6 +195,19 @@ export default {
     showToggleContent(id) {
       this.fillModels(id);
       this.toggleShowWin();
+    },
+    incomesByID() {
+      let newIncomes = [];
+      for (let key in this.incomes) {
+        if (this.incomes[key]["client_id"] == undefined) {
+          continue
+        }
+        if (this.incomes[key]["client_id"] != this.idModel) {
+          continue
+        }
+        newIncomes.push(this.incomes[key]);
+      }
+      return newIncomes
     },
     fillModels(id) {
       let data = {};
@@ -235,6 +261,42 @@ export default {
               d["type_client"] = data.results[key]["type_client"]["id"]
             }
             self.clients.push(d);
+          }
+        })
+    },
+    getIncomes() {
+      const self = this;
+      let url = "/v0/business/incomes/?";
+      if (this.dtStartModel) {
+        url += "&dt_start=" + this.dtStartModel +"T00:00:00"
+      }
+      if (this.dtEndModel) {
+        url += "&dt_end=" + this.dtEndModel +"T00:00:00"
+      }
+      fetch(process.env.baseUrl + url)
+        .then((response) => {
+          return response.json()
+        })
+        .then((data) => {
+          self.incomes = [];
+          for (let key in data.results) {
+            let d = {
+              "Стоимость": data.results[key]["price"],
+              "Услуга": data.results[key]["category"]["name"],
+              "Комментарий": data.results[key]["comments"],
+              "Продолжительность": data.results[key]["duration"],
+              "id": data.results[key]["id"],
+              "category_id": data.results[key]["category"]["id"],
+            }
+            if (data.results[key]["dt_provision"]) {
+              d["Дата оказания"] = data.results[key]["dt_provision"].replace("T", " ")
+            }
+            if (data.results[key]["client"]) {
+              d["Клиент"] = data.results[key]["client"]["name"]
+              d["client_id"] = data.results[key]["client"]["id"]
+            }
+
+            self.incomes.push(d);
           }
         })
     },
@@ -334,7 +396,7 @@ export default {
   border: 1px solid black;
   background: #ddd;
   padding: 20px 5px 10px 5px;
-  width: 300px;
+  width: 350px;
 }
 
 .pop-up > div {
@@ -355,6 +417,17 @@ export default {
   width: 100%;
   height: 100px;
   resize: none;
+}
+
+.client-incomes {
+  height: 200px;
+  overflow: auto;
+}
+.client-income-table th{
+  font-size: 8px !important;
+}
+.client-income-table td{
+  font-size: 10px !important;
 }
 @media screen and (max-width: 450px) {
   .clients-table th:nth-child(2) {
