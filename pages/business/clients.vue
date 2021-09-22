@@ -25,23 +25,23 @@
 
     <div class="pop-up" v-if="showPopUp">
       <div>
-        <input type="text" value=""  v-model.trim="nameModel" placeholder="Имя"/>
+        <input type="text" value="" v-model.trim="nameModel" placeholder="Имя"/>
       </div>
       <div>
-        <input type="text" value=""  v-model.trim="phoneModel" placeholder="Телефон"/>
+        <input type="text" value="" v-model.trim="phoneModel" placeholder="Телефон"/>
       </div>
       <div>
         <textarea v-model.trim="commentModel" placeholder="Комментарии"></textarea>
       </div>
       <div>
         <select v-model.trim="sourceModel">
-          <option  value=""  disabled selected>Источник появления</option>
+          <option value="" disabled selected>Источник появления</option>
           <option v-for="c in clients_sources" :value="c.id">{{ c.name }}</option>
         </select>
       </div>
       <div>
         <select v-model.trim="typeModel">
-          <option  value=""  disabled selected>Тип</option>
+          <option value="" disabled selected>Тип</option>
           <option v-for="c in clients_types" :value="c.id">{{ c.name }}</option>
         </select>
       </div>
@@ -72,13 +72,13 @@
       </div>
       <div>
         <select v-model.trim="sourceModel">
-          <option  value=""  disabled selected>Источник появления</option>
+          <option value="" disabled selected>Источник появления</option>
           <option v-for="c in clients_sources" :value="c.id">{{ c.name }}</option>
         </select>
       </div>
       <div>
         <select v-model.trim="typeModel">
-          <option  value=""  disabled selected>Тип</option>
+          <option value="" disabled selected>Тип</option>
           <option v-for="c in clients_types" :value="c.id">{{ c.name }}</option>
         </select>
       </div>
@@ -99,28 +99,28 @@
 
     <div class="pop-up" v-if="showShowPopUp">
       <div class="show-element">
-        <span>Имя:</span><span>{{ nameModel }}</span>
+        <span>Имя:</span><span>{{ nameModel | notEmpty }}</span>
       </div>
       <div class="show-element">
-        <span>Телефон:</span><span>{{ phoneModel }}</span>
+        <span>Телефон:</span><span>{{ phoneModel | notEmpty }}</span>
       </div>
       <div class="show-element">
-        <span>Комментарий:</span><span>{{ commentModel }}</span>
+        <span>Оценка:</span><span>{{ noteModel | notEmpty }}</span>
       </div>
       <div class="show-element">
-        <span>Оценка:</span><span>{{ noteModel }}</span>
+        <span>Откуда:</span><span>{{ sourceName(sourceModel) }}</span>
       </div>
       <div class="show-element">
-        <span>Откуда:</span><span>{{ sourceModel }}</span>
+        <span>Тип:</span><span>{{ typeName(typeModel) }}</span>
       </div>
       <div class="show-element">
-        <span>Тип:</span><span>{{ typeModel }}</span>
+        <span>Возраст:</span><span>{{ ageModel | notEmpty }}</span>
       </div>
       <div class="show-element">
-        <span>Возраст:</span><span>{{ ageModel }}</span>
+        <span>Дата появления:</span><span>{{ dtAppearModel | notEmpty }}</span>
       </div>
-      <div class="show-element">
-        <span>Дата появления:</span><span>{{ dtAppearModel }}</span>
+      <div class="show-element-comment">
+        <span>{{ commentModel }}</span>
       </div>
       <div class="button-block">
         <button v-on:click="toggleEditWin">Редактировать</button>
@@ -155,7 +155,7 @@ export default {
 
       clientsColumns: ["Имя", "Телефон", "Возраст", "Дата Связи", "Откуда", "Тип", "Возраст", "Комментарий", "Оценка",
         "method:Удл.:id:delContent", "method:Ред.:id:editToggleContent", "method:Посм.:id:showToggleContent"],
-      incomesColumns: ["Услуга",  "Стоимость", "Комментарий", "Дата оказания"],
+      incomesColumns: ["Услуга", "Стоимость", "Комментарий", "Дата оказания"],
       methodsList: {},
 
       clients: [],
@@ -179,9 +179,43 @@ export default {
     this.getTypes();
     this.getContent();
     this.getIncomes();
-    this.methodsList = {"delContent": this.delContent, "editToggleContent": this.editToggleContent, "showToggleContent": this.showToggleContent};
+    this.methodsList = {
+      "delContent": this.delContent,
+      "editToggleContent": this.editToggleContent,
+      "showToggleContent": this.showToggleContent
+    };
+  },
+  filters: {
+    notEmpty(value) {
+      if (!value) {
+        return "-";
+      }
+      return value;
+    }
   },
   methods: {
+    sourceName(id) {
+      let name = "-";
+      for (let key in this.clients_sources) {
+        if (this.clients_sources[key].id != id) {
+          continue
+        }
+        name = this.clients_sources[key].name;
+        break;
+      }
+      return name;
+    },
+    typeName(id) {
+      let name = "-";
+      for (let key in this.clients_types) {
+        if (this.clients_types[key].id != id) {
+          continue
+        }
+        name = this.clients_types[key].name;
+        break;
+      }
+      return name;
+    },
     toggleWin() {
       this.showPopUp = !this.showPopUp;
     },
@@ -268,10 +302,10 @@ export default {
       const self = this;
       let url = "/v0/business/incomes/?";
       if (this.dtStartModel) {
-        url += "&dt_start=" + this.dtStartModel +"T00:00:00"
+        url += "&dt_start=" + this.dtStartModel + "T00:00:00"
       }
       if (this.dtEndModel) {
-        url += "&dt_end=" + this.dtEndModel +"T00:00:00"
+        url += "&dt_end=" + this.dtEndModel + "T00:00:00"
       }
       fetch(process.env.baseUrl + url)
         .then((response) => {
@@ -358,7 +392,7 @@ export default {
           return response.json()
         })
         .then((data) => {
-            self.clients_sources = data.results;
+          self.clients_sources = data.results;
         })
     },
     getTypes() {
@@ -394,7 +428,7 @@ export default {
   margin: -200px auto;
   position: fixed;
   border: 1px solid black;
-  background: #ddd;
+  background: #f2f2f2;
   padding: 20px 5px 10px 5px;
   width: 300px;
 }
@@ -402,33 +436,57 @@ export default {
 .pop-up > div {
   margin: 10px 0 10px 0;
 }
+
 .pop-up select {
   width: 100%;
 }
+
 .pop-up .button-block {
   display: flex;
   justify-content: space-between;
   margin: auto 0;
 }
+
 .pop-up input {
   width: 100%;
 }
+
 .pop-up textarea {
   width: 100%;
   height: 100px;
   resize: none;
 }
 
+.pop-up .show-element {
+  font-size: 12px;
+  display: flex;
+  color: #3F454B;
+  justify-content: flex-start;
+}
+
+.pop-up .show-element-comment {
+  font-size: 12px;
+  color: #3F454B;
+}
+
+.pop-up .show-element span:first-child {
+  display: block;
+  width: 80px;
+}
+
 .client-incomes {
   height: 200px;
   overflow: auto;
 }
-.client-income-table th{
+
+.client-income-table th {
   font-size: 8px !important;
 }
-.client-income-table td{
+
+.client-income-table td {
   font-size: 10px !important;
 }
+
 @media screen and (max-width: 450px) {
   .clients-table th:nth-child(2) {
     display: none;

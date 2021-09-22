@@ -97,22 +97,22 @@
 
     <div class="pop-up" v-if="showShowPopUp">
       <div class="show-element">
-        <span>Название:</span><span>{{ serviceModel }}</span>
+        <span>Название:</span><span>{{ sourceName(serviceModel) }}</span>
       </div>
       <div class="show-element">
-        <span>Цена:</span><span>{{ priceModel }}</span>
+        <span>Цена:</span><span>{{ priceModel | notEmpty }}</span>
       </div>
       <div class="show-element">
-        <span>Комментарий:</span><span>{{ commentModel }}</span>
+        <span>Клиент:</span><span>{{ clientName(clientModel)}}</span>
       </div>
       <div class="show-element">
-        <span>Клиент:</span><span>{{ clientModel }}</span>
+        <span>Длит.:</span><span>{{ durationModel | notEmpty }}</span>
       </div>
       <div class="show-element">
-        <span>Продолжительность:</span><span>{{ durationModel }}</span>
+        <span>Дата:</span><span>{{ dtProvisionModel | notEmpty }}</span>
       </div>
-      <div class="show-element">
-        <span>Дата:</span><span>{{ dtProvisionModel }}</span>
+      <div class="show-element-comment">
+        {{ commentModel }}
       </div>
       <div class="button-block">
         <button v-on:click="toggleEditWin">Редактировать</button>
@@ -157,6 +157,14 @@ export default {
       idModel: 0,
     }
   },
+  filters: {
+    notEmpty(value) {
+      if (!value) {
+        return "-";
+      }
+      return value;
+    }
+  },
   mounted() {
     this.getContent();
     this.getServices();
@@ -164,6 +172,28 @@ export default {
     this.methodsList = {"delContent": this.delContent, "editToggleContent": this.editToggleContent, "showToggleContent": this.showToggleContent};
   },
   methods: {
+    sourceName(id) {
+      let name = "-";
+      for (let key in this.services) {
+        if (this.services[key].id != id) {
+          continue
+        }
+        name = this.services[key].name;
+        break;
+      }
+      return name;
+    },
+    clientName(id) {
+      let name = "-";
+      for (let key in this.clientsSources) {
+        if (this.clientsSources[key].id != id) {
+          continue
+        }
+        name = this.clientsSources[key].name;
+        break;
+      }
+      return name;
+    },
     toggleWin() {
       this.showPopUp = !this.showPopUp;
     },
@@ -334,7 +364,7 @@ export default {
   margin: -200px auto;
   position: fixed;
   border: 1px solid black;
-  background: #ddd;
+  background: #f2f2f2;
   padding: 20px 5px 10px 5px;
   width: 300px;
 }
@@ -357,6 +387,23 @@ export default {
   width: 100%;
   height: 100px;
   resize: none;
+}
+
+.pop-up .show-element {
+  font-size: 12px;
+  display: flex;
+  color: #3F454B;
+  justify-content: flex-start;
+}
+
+.pop-up .show-element-comment {
+  font-size: 12px;
+  color: #3F454B;
+}
+
+.pop-up .show-element span:first-child {
+  display: block;
+  width: 80px;
 }
 
 .outcomes {
