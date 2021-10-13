@@ -10,8 +10,8 @@
         <hr/>
         <div class="manage-data">
           <input type="text" v-model.trim="searchQuery" placeholder="Фильтр..." class="income-filter"/>
-          <DatePicker format="YYYY-MM-DD" v-model="dtStartModel"></DatePicker>
-          <DatePicker format="YYYY-MM-DD" v-model="dtEndModel"></DatePicker>
+          <input type="date" v-model="dtStartModel" class="income-filter"/>
+          <input type="date" v-model="dtEndModel" class="income-filter"/>
           <div class="buttons">
             <button v-on:click="getContent">Обновить</button>
             <button v-on:click="toggleWin">Добавить</button>
