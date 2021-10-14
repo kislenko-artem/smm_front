@@ -5,14 +5,21 @@
       <div id="content-header">
         <h3>Аналитика</h3>
       </div>
+      <div class="manage-data">
+        <input type="date" v-model="dtStartModel" class="income-filter"/>
+        <input type="date" v-model="dtEndModel" class="income-filter"/>
+        <div class="buttons">
+          <button v-on:click="getOperations">Обновить</button>
+        </div>
+      </div>
       <div class="chart-item" v-if="readySource">
         <div>
           <h4>Источники клиентов</h4>
-          <PieChart :data="sourcesChart"></PieChart>
+          <PieChart :chartData="sourcesChart"></PieChart>
         </div>
         <div>
           <h4>Типы клиентов </h4>
-          <PieChart :data="typeClientChart"></PieChart>
+          <PieChart :chartData="typeClientChart"></PieChart>
         </div>
 
       </div>
@@ -20,17 +27,17 @@
       <div class="chart-item" v-if="readyOperation">
         <div>
           <h4>Доход по типам</h4>
-          <PieChart :data="sourcesOperationsChart"></PieChart>
+          <PieChart :chartData="sourcesOperationsChart"></PieChart>
         </div>
         <div>
           <h4>Доход по источникам</h4>
-          <PieChart :data="typeOperationsClientChart"></PieChart>
+          <PieChart :chartData="typeOperationsClientChart"></PieChart>
         </div>
       </div>
 
       <div class="chart-item-line" v-if="readyOperation">
         <h4>График доходов\расходов</h4>
-        <LineChart :data="operationsChart"></LineChart>
+        <LineChart :chartData="operationsChart"></LineChart>
       </div>
     </div>
   </div>
@@ -41,6 +48,8 @@ export default {
   layout: 'account',
   data: () => {
     return {
+      dtStartModel:"",
+      dtEndModel: "",
       search: "",
       clientsSources: [],
       services: [],
@@ -69,7 +78,14 @@ export default {
   methods: {
     getOperations() {
       const self = this;
-      fetch(process.env.baseUrl + "/v0/business/incomes/")
+      let url = "/v0/business/incomes/?";
+      if (this.dtStartModel) {
+        url += "&dt_start=" + this.dtStartModel +"T00:00:00"
+      }
+      if (this.dtEndModel) {
+        url += "&dt_end=" + this.dtEndModel +"T00:00:00"
+      }
+      fetch(process.env.baseUrl + url)
         .then((response) => {
           return response.json()
         })
@@ -79,8 +95,13 @@ export default {
           let sources = {}
           let types = {}
           let operations = {}
-          let prevKey = ""
           let price = 0;
+          data.results.sort( (a, b) => {
+            if ( a.dt_provision < b.dt_provision ){
+              return -1;
+            }
+            return 1;
+          });
           for (let key in data.results) {
             price += parseFloat(data.results[key].price);
             operations[data.results[key].dt_provision] = price;

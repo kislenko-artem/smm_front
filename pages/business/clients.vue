@@ -25,34 +25,42 @@
 
     <div class="pop-up" v-if="showPopUp">
       <div>
+        <label>Имя</label>
         <input type="text" value="" v-model.trim="nameModel" placeholder="Имя"/>
       </div>
       <div>
+        <label>Телефон</label>
         <input type="text" value="" v-model.trim="phoneModel" placeholder="Телефон"/>
       </div>
       <div>
+        <label>Комментарии</label>
         <textarea v-model.trim="commentModel" placeholder="Комментарии"></textarea>
       </div>
       <div>
+        <label>Источник</label>
         <select v-model.trim="sourceModel">
           <option value="" disabled selected>Источник появления</option>
           <option v-for="c in clients_sources" :value="c.id">{{ c.name }}</option>
         </select>
       </div>
       <div>
+        <label>Тип</label>
         <select v-model.trim="typeModel">
           <option value="" disabled selected>Тип</option>
           <option v-for="c in clients_types" :value="c.id">{{ c.name }}</option>
         </select>
       </div>
       <div>
+        <label>Возраст</label>
         <input type="text" value="" v-model.trim="ageModel" placeholder="Возраст"/>
       </div>
       <div>
+        <label>Оценка</label>
         <input type="text" value="" v-model.trim="noteModel" placeholder="Оценка"/>
       </div>
       <div>
-        <DatePicker format="YYYY-MM-DD H:i:s" width="100%" v-model="dtAppearModel"></DatePicker>
+        <label>Дата появления</label>
+        <input type="datetime-local" v-model="dtAppearModel">
       </div>
       <div class="button-block">
         <button v-on:click="addContent">Добавить</button>
@@ -62,34 +70,42 @@
 
     <div class="pop-up" v-if="showEditPopUp">
       <div>
+        <label>Имя</label>
         <input type="text" value="" v-model.trim="nameModel" placeholder="Имя"/>
       </div>
       <div>
+        <label>Телефон</label>
         <input type="text" value="" v-model.trim="phoneModel" placeholder="Телефон"/>
       </div>
       <div>
+        <label>Комментарии</label>
         <textarea v-model.trim="commentModel" placeholder="Комментарии"></textarea>
       </div>
       <div>
+        <label>Источник</label>
         <select v-model.trim="sourceModel">
           <option value="" disabled selected>Источник появления</option>
           <option v-for="c in clients_sources" :value="c.id">{{ c.name }}</option>
         </select>
       </div>
       <div>
+        <label>Тип</label>
         <select v-model.trim="typeModel">
           <option value="" disabled selected>Тип</option>
           <option v-for="c in clients_types" :value="c.id">{{ c.name }}</option>
         </select>
       </div>
       <div>
+        <label>Возраст</label>
         <input type="text" value="" v-model.trim="ageModel" placeholder="Возраст"/>
       </div>
       <div>
+        <label>Оценка</label>
         <input type="text" value="" v-model.trim="noteModel" placeholder="Оценка"/>
       </div>
       <div>
-        <DatePicker format="YYYY-MM-DD H:i:s" width="100%" v-model="dtAppearModel"></DatePicker>
+        <label>Дата</label>
+        <input type="datetime-local" v-model="dtAppearModel">
       </div>
       <div class="button-block">
         <button v-on:click="updateContent(idModel)">Сохранить</button>
@@ -345,7 +361,7 @@ export default {
           category_id: self.sourceModel,
           type_client_id: self.typeModel,
           age: self.ageModel,
-          dt_appearance: self.dtAppearModel,
+          dt_appearance: self.dtAppearModel.replace("T", " ") + ":00",
           note: self.noteModel,
         })
       })
@@ -365,7 +381,7 @@ export default {
           category_id: self.sourceModel,
           type_client_id: self.typeModel,
           age: self.ageModel,
-          dt_appearance: self.dtAppearModel,
+          dt_appearance: self.dtAppearModel.replace("T", " ") + ":00",
           note: self.noteModel,
         })
       })
@@ -451,6 +467,11 @@ export default {
   width: 100%;
 }
 
+.pop-up label {
+  font-size:12px;
+  color: #666;
+}
+
 .pop-up textarea {
   width: 100%;
   height: 100px;
@@ -488,6 +509,8 @@ export default {
 }
 
 @media screen and (max-width: 450px) {
+
+
   .clients-table th:nth-child(2) {
     display: none;
   }
@@ -495,7 +518,6 @@ export default {
   .clients-table td:nth-child(2) {
     display: none;
   }
-
   .clients-table th:nth-child(3) {
     display: none;
   }
@@ -509,14 +531,6 @@ export default {
   }
 
   .clients-table td:nth-child(4) {
-    display: none;
-  }
-
-  .clients-table th:nth-child(5) {
-    display: none;
-  }
-
-  .clients-table td:nth-child(5) {
     display: none;
   }
 
@@ -544,11 +558,26 @@ export default {
     display: none;
   }
 
+  .clients-table th:nth-child(9) {
+    display: none;
+  }
+
+  .clients-table td:nth-child(9) {
+    display: none;
+  }
+
   .clients-table th:nth-child(10) {
     display: none;
   }
 
   .clients-table td:nth-child(10) {
+    display: none;
+  }
+  .clients-table th:nth-child(11) {
+    display: none;
+  }
+
+  .clients-table td:nth-child(11) {
     display: none;
   }
 }

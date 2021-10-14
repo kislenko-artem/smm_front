@@ -1,10 +1,12 @@
 import Vue from 'vue';
-import { Pie }  from 'vue-chartjs';
+import { Pie, mixins }  from 'vue-chartjs';
+const { reactiveProp } = mixins
 
 Vue.component('PieChart', {
   extends: Pie,
-  props: ['data'],
+  mixins: [reactiveProp],
+  props: ['chartData'],
   mounted () {
-    this.renderChart(this.data)
+    this.renderChart(this.chartData)
   }
 })

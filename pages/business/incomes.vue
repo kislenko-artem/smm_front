@@ -35,28 +35,34 @@
 
     <div class="pop-up" v-if="showPopUp">
       <div>
+        <label>Источник</label>
         <select v-model.trim="serviceModel">
           <option  value=""  disabled selected>Источник появления</option>
           <option v-for="c in services" :value="c.id">{{ c.name }}</option>
         </select>
       </div>
       <div>
+        <label>Клиент</label>
         <select v-model.trim="clientModel">
           <option  value=""  disabled selected>Клиент</option>
           <option v-for="c in clientsSources" :value="c.id">{{ c.name }}</option>
         </select>
       </div>
       <div>
+        <label>Стоимость</label>
         <input type="text" value="" v-model.trim="priceModel" placeholder="Стоимость"/>
       </div>
       <div>
+        <label>Продолжительность</label>
         <input type="text" value="" v-model.trim="durationModel" placeholder="Продолжительность"/>
       </div>
       <div>
+        <label>Комментарии</label>
         <textarea v-model.trim="commentModel" placeholder="Комментарии"></textarea>
       </div>
       <div>
-        <DatePicker format="YYYY-MM-DD H:i:s" width="100%" v-model="dtProvisionModel"></DatePicker>
+        <label>Дата</label>
+        <input type="datetime-local" v-model="dtProvisionModel">
       </div>
       <div class="button-block">
         <button v-on:click="addContent">Добавить</button>
@@ -66,28 +72,34 @@
 
     <div class="pop-up" v-if="showEditPopUp">
       <div>
+        <label>Источник</label>
         <select v-model.trim="serviceModel">
           <option  value=""  disabled selected>Источник появления</option>
           <option v-for="c in services" :value="c.id">{{ c.name }}</option>
         </select>
       </div>
       <div>
+        <label>Клиент</label>
         <select v-model.trim="clientModel">
           <option  value=""  disabled selected>Клиент</option>
           <option v-for="c in clientsSources" :value="c.id">{{ c.name }}</option>
         </select>
       </div>
       <div>
+        <label>Стоимость</label>
         <input type="text" value="" v-model.trim="priceModel" placeholder="Стоимость"/>
       </div>
       <div>
+        <label>Продолжительность</label>
         <input type="text" value="" v-model.trim="durationModel" placeholder="Продолжительность"/>
       </div>
       <div>
+        <label>Комментарии</label>
         <textarea v-model.trim="commentModel" placeholder="Комментарии"></textarea>
       </div>
       <div>
-        <DatePicker format="YYYY-MM-DD H:i:s" width="100%" v-model="dtProvisionModel"></DatePicker>
+        <label>Дата</label>
+        <input type="datetime-local" v-model="dtProvisionModel">
       </div>
       <div class="button-block">
         <button v-on:click="updateContent(idModel)">Сохранить</button>
@@ -140,7 +152,7 @@ export default {
       showEditPopUp: false,
       showShowPopUp: false,
 
-      clientsColumns: ["Услуга",  "Стоимость", "Комментарий", "Клиент", "Дата оказания", "Продолжительность",
+      clientsColumns: ["Услуга",  "Стоимость", "Комментарий", "Клиент", "Дата", "Продолжительность",
         "method:Удл.:id:delContent", "method:Ред.:id:editToggleContent", "method:Посм.:id:showToggleContent"],
       methodsList: {},
 
@@ -222,7 +234,7 @@ export default {
       this.clientModel = data["client_id"];
       this.serviceModel = data["category_id"];
       this.commentModel = data["Комментарий"];
-      this.dtProvisionModel = data["Дата оказания"];
+      this.dtProvisionModel = data["Дата"];
       this.durationModel = data["Продолжительность"];
       this.idModel = id;
     },
@@ -264,7 +276,7 @@ export default {
               "category_id": data.results[key]["category"]["id"],
             }
             if (data.results[key]["dt_provision"]) {
-              d["Дата оказания"] = data.results[key]["dt_provision"].replace("T", " ")
+              d["Дата"] = data.results[key]["dt_provision"].replace("T", " ")
             }
             if (data.results[key]["client"]) {
               d["Клиент"] = data.results[key]["client"]["name"]
@@ -284,7 +296,7 @@ export default {
           comments: self.commentModel,
           category_id: parseInt(self.serviceModel),
           client_id: parseInt(self.clientModel),
-          dt_provision: self.dtProvisionModel,
+          dt_provision: self.dtProvisionModel.replace("T", " ") + ":00",
           duration: self.durationModel
         })
       })
@@ -302,7 +314,7 @@ export default {
           comments: self.commentModel,
           category_id: parseInt(self.serviceModel),
           client_id: parseInt(self.clientModel),
-          dt_provision: self.dtProvisionModel,
+          dt_provision: self.dtProvisionModel.replace("T", " ") + ":00",
           duration: self.durationModel
         })
       })
@@ -383,6 +395,11 @@ export default {
 .pop-up input {
   width: 100%;
 }
+
+.pop-up label {
+  font-size:12px;
+  color: #666;
+}
 .pop-up textarea {
   width: 100%;
   height: 100px;
@@ -441,19 +458,20 @@ export default {
     display: none;
   }
 
-  .income-table  th:nth-child(5) {
-    display: none;
-  }
-
-  .income-table  td:nth-child(5) {
-    display: none;
-  }
 
   .income-table  th:nth-child(6) {
     display: none;
   }
 
   .income-table  td:nth-child(6) {
+    display: none;
+  }
+
+  .income-table  th:nth-child(7) {
+    display: none;
+  }
+
+  .income-table td:nth-child(7) {
     display: none;
   }
 
