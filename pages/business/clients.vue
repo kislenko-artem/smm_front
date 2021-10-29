@@ -140,6 +140,7 @@
       </div>
       <div class="button-block">
         <button v-on:click="toggleEditWin">Редактировать</button>
+        <button v-on:click="toggleDelete(idModel)">Удалить</button>
         <button v-on:click="toggleShowWin">Отмена</button>
       </div>
 
@@ -238,6 +239,11 @@ export default {
     toggleEditWin() {
       this.showShowPopUp = false;
       this.showEditPopUp = !this.showEditPopUp;
+    },
+    toggleDelete(id) {
+      this.showShowPopUp = false;
+      this.showEditPopUp = false;
+      this.delContent(id);
     },
     toggleShowWin() {
       this.showShowPopUp = !this.showShowPopUp;
