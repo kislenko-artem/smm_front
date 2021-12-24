@@ -387,7 +387,7 @@ export default {
           category_id: self.sourceModel,
           type_client_id: self.typeModel,
           age: self.ageModel,
-          dt_appearance: self.dtAppearModel.replace("T", " ") + ":00",
+          dt_appearance: self.dtAppearModel.replace("T", " "),
           note: self.noteModel,
         })
       })
