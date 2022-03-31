@@ -35,9 +35,9 @@
 
     <div class="pop-up" v-if="showPopUp">
       <div>
-        <label>Источник</label>
+        <label>Услуга\Расход</label>
         <select v-model.trim="serviceModel">
-          <option  value=""  disabled selected>Источник появления</option>
+          <option  value=""  disabled selected>Услуга\Расход</option>
           <option v-for="c in services" :value="c.id">{{ c.name }}</option>
         </select>
       </div>
@@ -72,9 +72,9 @@
 
     <div class="pop-up" v-if="showEditPopUp">
       <div>
-        <label>Источник</label>
+        <label>Услуга\Расход</label>
         <select v-model.trim="serviceModel">
-          <option  value=""  disabled selected>Источник появления</option>
+          <option  value=""  disabled selected>Услуга\Расход</option>
           <option v-for="c in services" :value="c.id">{{ c.name }}</option>
         </select>
       </div>
@@ -250,7 +250,7 @@ export default {
     },
     getContent() {
       const self = this;
-      let url = "/v0/business/incomes/?";
+      let url = "/v0/business/incomes/incomes?";
       if (this.dtStartModel) {
         url += "&dt_start=" + this.dtStartModel +"T00:00:00"
       }
@@ -295,7 +295,7 @@ export default {
     },
     addContent() {
       const self = this;
-      fetch(process.env.baseUrl + "/v0/business/incomes/", {
+      fetch(process.env.baseUrl + "/v0/business/incomes/incomes", {
         method: 'POST',
         body: JSON.stringify({
           price: self.priceModel,
@@ -341,7 +341,7 @@ export default {
     },
     getClients() {
       const self = this;
-      fetch(process.env.baseUrl + "/v0/business/clients/")
+      fetch(process.env.baseUrl + "/v0/business/clients/clients")
         .then((response) => {
           return response.json()
         })

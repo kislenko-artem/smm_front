@@ -83,7 +83,7 @@ export default {
     getOperations() {
       const self = this;
       self.readyOperation = false;
-      let url = "/v0/business/incomes/?";
+      let url = "/v0/business/incomes/incomes?";
       if (this.dtStartModel) {
         url += "&dt_start=" + this.dtStartModel +"T00:00:00"
       }
@@ -161,7 +161,7 @@ export default {
     getClients() {
       const self = this;
       self.readySource = false;
-      let url = "/v0/business/clients/?";
+      let url = "/v0/business/clients/clients?";
       if (this.dtStartModel) {
         url += "&dt_start=" + this.dtStartModel +"T00:00:00"
       }

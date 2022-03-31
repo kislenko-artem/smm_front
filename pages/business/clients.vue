@@ -290,7 +290,7 @@ export default {
     },
     getContent() {
       const self = this;
-      fetch(process.env.baseUrl + "/v0/business/clients/")
+      fetch(process.env.baseUrl + "/v0/business/clients/clients")
         .then((response) => {
           return response.json()
         })
@@ -322,7 +322,7 @@ export default {
     },
     getIncomes() {
       const self = this;
-      let url = "/v0/business/incomes/?";
+      let url = "/v0/business/incomes/incomes?";
       if (this.dtStartModel) {
         url += "&dt_start=" + this.dtStartModel + "T00:00:00"
       }
@@ -358,7 +358,7 @@ export default {
     },
     addContent() {
       const self = this;
-      fetch(process.env.baseUrl + "/v0/business/clients/", {
+      fetch(process.env.baseUrl + "/v0/business/clients/clients", {
         method: 'POST',
         body: JSON.stringify({
           name: self.nameModel,

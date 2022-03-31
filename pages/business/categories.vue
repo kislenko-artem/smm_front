@@ -151,7 +151,7 @@ export default {
     },
     addCategory(alias, model, name) {
       const self = this;
-      fetch(process.env.baseUrl + "/v0/business/categories/", {
+      fetch(process.env.baseUrl + "/v0/business/categories/categories", {
         method: 'POST',
         body: JSON.stringify({name: name, category_type: alias})
       })
