@@ -327,7 +327,7 @@ export default {
         url += "&dt_start=" + this.dtStartModel + "T00:00:00"
       }
       if (this.dtEndModel) {
-        url += "&dt_end=" + this.dtEndModel + "T00:00:00"
+        url += "&dt_end=" + this.dtEndModel + "T23:59:59"
       }
       fetch(process.env.baseUrl + url)
         .then((response) => {

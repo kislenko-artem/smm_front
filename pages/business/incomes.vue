@@ -255,7 +255,7 @@ export default {
         url += "&dt_start=" + this.dtStartModel +"T00:00:00"
       }
       if (this.dtEndModel) {
-        url += "&dt_end=" + this.dtEndModel +"T00:00:00"
+        url += "&dt_end=" + this.dtEndModel +"T23:59:59"
       }
       fetch(process.env.baseUrl + url)
         .then((response) => {
@@ -320,7 +320,7 @@ export default {
           comments: self.commentModel,
           category_id: parseInt(self.serviceModel),
           client_id: parseInt(self.clientModel),
-          dt_provision: self.dtProvisionModel.replace("T", " ") + ":00",
+          dt_provision: self.dtProvisionModel.replace("T", " "),
           duration: self.durationModel
         })
       })

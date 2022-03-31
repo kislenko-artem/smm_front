@@ -9,7 +9,7 @@
         <input type="date" v-model="dtStartModel" class="income-filter"/>
         <input type="date" v-model="dtEndModel" class="income-filter"/>
         <div class="buttons">
-          <button v-on:click="getOperations">Обновить</button>
+          <button v-on:click="updateData">Обновить</button>
         </div>
       </div>
       <div class="chart-item" v-if="readySource">
@@ -76,14 +76,19 @@ export default {
 
   },
   methods: {
+    updateData() {
+      this.getClients();
+      this.getOperations();
+    },
     getOperations() {
       const self = this;
+      self.readyOperation = false;
       let url = "/v0/business/incomes/?";
       if (this.dtStartModel) {
         url += "&dt_start=" + this.dtStartModel +"T00:00:00"
       }
       if (this.dtEndModel) {
-        url += "&dt_end=" + this.dtEndModel +"T00:00:00"
+        url += "&dt_end=" + this.dtEndModel +"T23:59:59"
       }
       fetch(process.env.baseUrl + url)
         .then((response) => {
@@ -155,7 +160,15 @@ export default {
     },
     getClients() {
       const self = this;
-      fetch(process.env.baseUrl + "/v0/business/clients/")
+      self.readySource = false;
+      let url = "/v0/business/clients/?";
+      if (this.dtStartModel) {
+        url += "&dt_start=" + this.dtStartModel +"T00:00:00"
+      }
+      if (this.dtEndModel) {
+        url += "&dt_end=" + this.dtEndModel +"T23:59:59"
+      }
+      fetch(process.env.baseUrl + url)
         .then((response) => {
           return response.json()
         })
