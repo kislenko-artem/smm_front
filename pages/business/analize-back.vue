@@ -124,7 +124,6 @@ export default {
             }
             let counter = 0;
             for (let d in finishAgregator) {
-              console.log(d, finishAgregator[d]);
               var label = "Вернулось раз: " + d;
               if (d == 1) {
                 label = "Не вернулось"
