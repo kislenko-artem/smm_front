@@ -10,7 +10,12 @@
         <hr/>
         <div class="manage-data">
           <input type="text" v-model.trim="searchQuery" placeholder="Фильтр..."/>
-          <button v-on:click="toggleWin">Добавить</button>
+          <input type="date" v-model="dtStartModel" class="income-filter"/>
+          <input type="date" v-model="dtEndModel" class="income-filter"/>
+          <div class="buttons">
+            <button v-on:click="getContent">Обновить</button>
+            <button v-on:click="toggleWin">Добавить</button>
+          </div>
         </div>
         <hr/>
         <Grid
@@ -165,6 +170,8 @@ export default {
   data: () => {
     return {
       searchQuery: "",
+      dtStartModel: "",
+      dtEndModel: "",
 
       showPopUp: false,
       showEditPopUp: false,
@@ -290,7 +297,14 @@ export default {
     },
     getContent() {
       const self = this;
-      fetch(process.env.baseUrl + "/v0/business/clients/clients")
+      let url = "/v0/business/clients/clients?";
+      if (this.dtStartModel) {
+        url += "&dt_start=" + this.dtStartModel +"T00:00:00"
+      }
+      if (this.dtEndModel) {
+        url += "&dt_end=" + this.dtEndModel +"T23:59:59"
+      }
+      fetch(process.env.baseUrl + url)
         .then((response) => {
           return response.json()
         })

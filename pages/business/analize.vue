@@ -3,7 +3,7 @@
     <Sidebar/>
     <div id="content">
       <div id="content-header">
-        <h3>Аналитика</h3>
+        <h3>Финансовая аналитика</h3>
       </div>
       <div class="manage-data">
         <input type="date" v-model="dtStartModel" class="income-filter"/>
@@ -36,8 +36,11 @@
       </div>
 
       <div class="chart-item-line" v-if="readyOperation">
-        <h4>График доходов\расходов</h4>
-        <LineChart :chartData="operationsChart"></LineChart>
+        <h4>Прибыль</h4>
+        <LineChart :chartData="operationsChart" :width="300" :height="300"></LineChart>
+
+        <h4>Доход</h4>
+        <LineChart :chartData="incomesChart" :width="300" :height="300"></LineChart>
       </div>
     </div>
   </div>
@@ -65,6 +68,7 @@ export default {
       readySource: false,
 
       operationsChart:{},
+      incomesChart: {},
       sourcesOperationsChart:{},
       typeOperationsClientChart:{},
       readyOperation: false,
@@ -101,15 +105,31 @@ export default {
           let types = {}
           let operations = {}
           let price = 0;
+          let positivePrice = 0;
+          let positiveOperations = {}
           data.results.sort( (a, b) => {
             if ( a.dt_provision < b.dt_provision ){
               return -1;
             }
             return 1;
           });
+
+          var prevMonth = -1
           for (let key in data.results) {
-            price += parseFloat(data.results[key].price);
+            var numPrice = parseFloat(data.results[key].price)
+
+            price += numPrice;
             operations[data.results[key].dt_provision] = price;
+
+            if (numPrice > 0) {
+              var dt = new Date(Date.parse(data.results[key].dt_provision));
+              if (dt.getMonth() !== prevMonth) {
+                positivePrice = 0
+              }
+              prevMonth = dt.getMonth();
+              positivePrice += numPrice;
+              positiveOperations[data.results[key].dt_provision] = positivePrice;
+            }
 
             if (data.results[key].client != undefined) {
               if (data.results[key].client.category != undefined) {
@@ -129,10 +149,17 @@ export default {
           }
 
           self.operationsChart.labels = [];
-          self.operationsChart.datasets = [{label: "Доходы", data: []}];
+          self.operationsChart.datasets = [{label: "Прибыль", data: []}];
+
+          self.incomesChart.labels = [];
+          self.incomesChart.datasets = [{label: "Доход", data: []}];
           for (let key in operations) {
             self.operationsChart.labels.push(key);
             self.operationsChart.datasets[0].data.push(operations[key]);
+          }
+          for (let key in positiveOperations) {
+            self.incomesChart.labels.push(key);
+            self.incomesChart.datasets[0].data.push(positiveOperations[key]);
           }
 
           self.sourcesOperationsChart.labels = [];
@@ -236,6 +263,7 @@ export default {
 .chart-item-line {
   width: 100%;
 }
+
 
 .chart-item div {
   width: 50%;

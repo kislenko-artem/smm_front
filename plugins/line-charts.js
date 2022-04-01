@@ -7,6 +7,8 @@ Vue.component('LineChart', {
   mixins: [reactiveProp],
   props: ['chartData'],
   mounted () {
-    this.renderChart(this.chartData)
+    this.renderChart(this.chartData, {
+      maintainAspectRatio:false
+    })
   }
 })

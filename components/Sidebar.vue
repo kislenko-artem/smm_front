@@ -13,8 +13,11 @@
         <li>
           <NuxtLink to="/business/incomes">Операции</NuxtLink>
         </li>
+        <li>Аналитика</li>
         <li>
-          <NuxtLink to="/business/analize">Аналитика</NuxtLink>
+          <ul>
+            <li><NuxtLink to="/business/analize">Финансы</NuxtLink></li>
+          </ul>
         </li>
       </ul>
       <h3>Вконтакте: </h3>
