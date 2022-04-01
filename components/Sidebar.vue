@@ -17,6 +17,8 @@
         <li>
           <ul>
             <li><NuxtLink to="/business/analize">Финансы</NuxtLink></li>
+            <li><NuxtLink to="/business/analize-clients">Клиенты</NuxtLink></li>
+            <li><NuxtLink to="/business/analize-back">Возвращаемость</NuxtLink></li>
           </ul>
         </li>
       </ul>
