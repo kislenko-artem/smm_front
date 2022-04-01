@@ -12,7 +12,13 @@
           <button v-on:click="updateData">Обновить</button>
         </div>
       </div>
-      В разработке
+      <h5>для корректного отображения, конечная дата, должна быть последний день месяца</h5>
+      <div class="chart-item"  v-if="readyOperation">
+        <div v-for="(item, index) in data">
+          Возвращаемость по: {{ index }}
+          <PieChart :chartData="item"></PieChart>
+        </div>
+      </div>
 
     </div>
   </div>
@@ -28,6 +34,9 @@ export default {
       types: [],
       data: {},
       readyOperation: false,
+      colors: ["#CD5C5C", "#F08080", "#FA8072", "#E9967A", "#FFA07A", "#DC143C", "#FF0000", "#B22222", "#8B0000",
+        "#FFC0CB", "#FF69B4", "#FF1493", "#C71585", "#DB7093", "#98FB98", "#00FA9A", "#00FF7F", "#228B22", "#006400",
+        "#FFD700", "#FFFF00", "#00FFFF", "#7FFFD4", "#5F9EA0", "#4682B4", "#E6E6FA", "#DDA0DD", "#4B0082", "#FFF5EE", ],
     }
   },
   beforeMount() {
@@ -70,31 +79,64 @@ export default {
             }
             return 1;
           });
+          var lastKeyDt = ""
+          for (let key in data.results) {
+            var dt = new Date(Date.parse(data.results[key].dt_provision));
+            lastKeyDt = dt.getFullYear().toString() + " " + dt.getMonth();
+          }
 
-          var months = ["Январь", "Февраль", "Март", "Апрель", "Мая", "Июнь", "Июль", "Август", "Сентябрь", "Октябрь", "Ноябрь", "Декабрь", ]
           var agregator = {}
           for (let key in data.results) {
             var numPrice = parseFloat(data.results[key].price)
             if (numPrice < 0) {
               continue
             }
-            var dt = new Date(Date.parse(data.results[key].dt_provision));
-            var keyDate = dt.getFullYear().toString() + " " + months[dt.getMonth()];
-            if (agregator[keyDate] === undefined) {
-              agregator[keyDate] = {"income":0, "avg_income": 0, "total_count": 0, "types_client": {}}
-            }
             if (!data.results[key].client) {
               continue
             }
-            agregator[keyDate].income += numPrice;
-            agregator[keyDate].total_count += 1;
+            var dt = new Date(Date.parse(data.results[key].dt_provision));
+            var keyDate = dt.getFullYear().toString() + " " + dt.getMonth();
             var client_type_name = data.results[key].client.type_client.name;
-            if (agregator[keyDate].types_client[client_type_name] === undefined) {
-              agregator[keyDate].types_client[client_type_name] = 0;
+
+            if (agregator[client_type_name] === undefined) {
+              agregator[client_type_name] = {}
             }
-            agregator[keyDate].types_client[client_type_name] += 1;
+
+            // не учитывать новых клиентов этого месяца
+            if (keyDate === lastKeyDt && agregator[client_type_name][data.results[key].client.id] === undefined) {
+              continue
+            }
+            if (agregator[client_type_name][data.results[key].client.id] === undefined) {
+              agregator[client_type_name][data.results[key].client.id] = 0;
+            }
+            agregator[client_type_name][data.results[key].client.id] += 1;
           }
-          self.data = agregator;
+          for (var key in agregator) {
+            self.data[key] = {}
+            self.data[key].labels = [];
+            self.data[key].datasets = [{data: [], backgroundColor: []}];
+            var finishAgregator = {}
+            for (let d in agregator[key]) {
+              if (finishAgregator[agregator[key][d]] == undefined) {
+                finishAgregator[agregator[key][d]] = 0;
+              }
+              finishAgregator[agregator[key][d]] += 1;
+            }
+            let counter = 0;
+            for (let d in finishAgregator) {
+              console.log(d, finishAgregator[d]);
+              var label = "Вернулось раз: " + d;
+              if (d == 1) {
+                label = "Не вернулось"
+              }
+              self.data[key].labels.push(label);
+              self.data[key].datasets[0].data.push(finishAgregator[d]);
+              self.data[key].datasets[0].backgroundColor.push(self.colors[counter]);
+              counter++;
+
+            }
+          }
+          self.readyOperation = true;
         })
     }
   }
