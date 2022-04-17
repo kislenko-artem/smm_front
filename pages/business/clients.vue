@@ -320,7 +320,7 @@ export default {
               "id": data.results[key]["id"],
             }
             if (data.results[key]["dt_appearance"]) {
-              d["Дата Связи"] = data.results[key]["dt_appearance"].replace("T", " ")
+              d["Дата Связи"] = data.results[key]["dt_appearance"]
             }
             if (data.results[key]["category"]) {
               d["Откуда"] = data.results[key]["category"]["name"]
@@ -359,7 +359,7 @@ export default {
               "category_id": data.results[key]["category"]["id"],
             }
             if (data.results[key]["dt_provision"]) {
-              d["Дата оказания"] = data.results[key]["dt_provision"].replace("T", " ")
+              d["Дата оказания"] = data.results[key]["dt_provision"]
             }
             if (data.results[key]["client"]) {
               d["Клиент"] = data.results[key]["client"]["name"]

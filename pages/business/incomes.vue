@@ -282,7 +282,7 @@ export default {
               "category_id": data.results[key]["category"]["id"],
             }
             if (data.results[key]["dt_provision"]) {
-              d["Дата"] = data.results[key]["dt_provision"].replace("T", " ")
+              d["Дата"] = data.results[key]["dt_provision"]
             }
             if (data.results[key]["client"]) {
               d["Клиент"] = data.results[key]["client"]["name"]
