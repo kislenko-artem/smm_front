@@ -26,7 +26,8 @@ export default {
   plugins: [
     { src: '@/plugins/vue-datepicker', mode: 'client' },
     { src: '@/plugins/pie-charts', mode: 'client' },
-    { src: '@/plugins/line-charts', mode: 'client' }
+    { src: '@/plugins/line-charts', mode: 'client' },
+    { src: '@/plugins/bar-charts', mode: 'client' }
   ],
 
   // Auto import components: https://go.nuxtjs.dev/config-components

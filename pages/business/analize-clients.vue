@@ -41,11 +41,25 @@
         </tr>
       </table>
 
+      <section class="chart-group">
+        <label>Группировать по: </label>
+        <button v-on:click="setGroupByDay">День</button>
+        <button v-on:click="setGroupByWeek">Неделя</button>
+        <button v-on:click="setGroupByMonth">Месяц</button>
+      </section>
+      <div class="chart-bar"  v-if="readyOperation">
+        <BarChart :chartData="agregateData"></BarChart>
+      </div>
+
     </div>
   </div>
 </template>
 
 <script>
+const groupDay = "day";
+const groupMonth = "month";
+const groupWeek = "week";
+
 export default {
   layout: 'account',
   data: () => {
@@ -54,7 +68,9 @@ export default {
       dtEndModel: "",
       types: [],
       data: {},
+      agregateData: {},
       readyOperation: false,
+      groupBy: groupDay,
     }
   },
   beforeMount() {
@@ -62,6 +78,28 @@ export default {
 
   },
   methods: {
+    setGroupByDay() {
+      this.groupBy = groupDay;
+      this.updateData();
+    },
+    setGroupByMonth() {
+      this.groupBy = groupMonth;
+      this.updateData();
+    },
+    setGroupByWeek() {
+      this.groupBy = groupWeek;
+      this.updateData();
+    },
+    nameGroupBy() {
+      switch (this.groupBy) {
+        case groupDay:
+          return "по дням";
+        case groupWeek:
+          return "по неделям";
+        case groupMonth:
+          return "по месяцам";
+      }
+    },
     c_filter: function (data, filter) {
       for (var key in data) {
         if (key !== filter) {
@@ -122,7 +160,50 @@ export default {
             agregator[keyDate].types_client[client_type_name] += 1;
           }
           self.data = agregator;
-        })
+
+          self.agregateData.labels = [];
+          self.agregateData.datasets = [{label: "Количество клиентов " + self.nameGroupBy(), data: []}];
+          var counter = 0
+          var prevVal = -1;
+          var days = ["пн.", "вт.", "ср.", "чт.", "пт.", "сб.", "вс.", ]
+          for (let key in data.results) {
+            var dt = new Date(Date.parse(data.results[key].dt_provision));
+
+            switch (this.groupBy) {
+              case groupDay:
+                var currentVal = dt.getDay();
+                break;
+              case groupWeek:
+                var d = new Date(Date.UTC(dt.getFullYear(), dt.getMonth(), dt.getDate()));
+                // Set to nearest Thursday: current date + 4 - current day number
+                // Make Sunday's day number 7
+                d.setUTCDate(d.getUTCDate() + 4 - (d.getUTCDay()||7));
+                // Get first day of year
+                var yearStart = new Date(Date.UTC(d.getUTCFullYear(),0,1));
+                // Calculate full weeks to nearest Thursday
+                var weekNo = Math.ceil(( ( (d - yearStart) / 86400000) + 1)/7);
+                var currentVal = weekNo;
+                break;
+              case groupMonth:
+                var currentVal = dt.getMonth();
+                break;
+            }
+            if (prevVal != currentVal) {
+              var label = data.results[key].dt_provision;
+              if (this.groupBy == groupWeek) {
+                label += "; " + days[dt.getDay() - 1];
+              }
+              self.agregateData.labels.push(label);
+              self.agregateData.datasets[0].data.push(counter);
+              counter = 0;
+              prevVal = currentVal
+            }
+            counter++;
+          }
+
+
+          self.readyOperation = true;
+        });
     }
   }
 }
@@ -140,10 +221,14 @@ table.table-clients td {
   width: 16%;
 }
 
+.chart-group {
+  margin-top: 20px;
+  height: 30px;
+}
 
 
-.chart-item div {
-  width: 50%;
+.chart-bar div {
+  width: 100%;
 }
 @media screen and (max-width: 450px) {
   .chart-item div {
