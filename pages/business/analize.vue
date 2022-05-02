@@ -35,6 +35,17 @@
         </div>
       </div>
 
+      <div class="chart-item" v-if="readyNewOperation">
+        <div>
+          <h4>Доход по типам (новые)</h4>
+          <PieChart :chartData="sourcesOperationsNewChart"></PieChart>
+        </div>
+        <div>
+          <h4>Доход по источникам (новые)</h4>
+          <PieChart :chartData="typeOperationsNewClientChart"></PieChart>
+        </div>
+      </div>
+
       <div class="chart-item-line" v-if="readyOperation">
         <h4>Прибыль</h4>
         <LineChart :chartData="operationsChart" :width="300" :height="300"></LineChart>
@@ -72,17 +83,20 @@ export default {
       sourcesOperationsChart:{},
       typeOperationsClientChart:{},
       readyOperation: false,
+
+      typeOperationsNewClientChart:{},
+      sourcesOperationsNewChart: {},
+      readyNewOperation: false,
     }
   },
   beforeMount() {
-    this.getClients();
-    this.getOperations();
-
+    this.updateData();
   },
   methods: {
     updateData() {
       this.getClients();
       this.getOperations();
+      this.getOperationsNew();
     },
     getOperations() {
       const self = this;
@@ -99,6 +113,7 @@ export default {
           return response.json()
         })
         .then((data) => {
+
           self.operations = data.results;
 
           let sources = {}
@@ -131,16 +146,17 @@ export default {
               positiveOperations[data.results[key].dt_provision] = positivePrice;
             }
 
-            if (data.results[key].client != undefined) {
-              if (data.results[key].client.category != undefined) {
-                if (sources[data.results[key].client.category["name"]] == undefined) {
-                  sources[data.results[key].client.category["name"]] = 0;
+            if (data.results[key].client) {
+
+              if (data.results[key].client.subcategory) {
+                if (sources[data.results[key].client.subcategory["name"]] === undefined) {
+                  sources[data.results[key].client.subcategory["name"]] = 0;
                 }
-                sources[data.results[key].client.category["name"]] += data.results[key].price;
+                sources[data.results[key].client.subcategory["name"]] += data.results[key].price;
               }
 
-              if (data.results[key].client.type_client != undefined) {
-                if (types[data.results[key].client.type_client["name"]] == undefined) {
+              if (data.results[key].client.type_client !== undefined) {
+                if (types[data.results[key].client.type_client["name"]] === undefined) {
                   types[data.results[key].client.type_client["name"]] = 0;
                 }
                 types[data.results[key].client.type_client["name"]] += data.results[key].price;
@@ -181,7 +197,93 @@ export default {
             self.typeOperationsClientChart.datasets[0].backgroundColor.push(self.colors[counter]);
             counter++;
           }
+
           self.readyOperation = true;
+
+        })
+    },
+    getOperationsNew() {
+      const self = this;
+      self.readyNewOperation = false;
+      let url = "/v0/business/incomes/incomes?";
+      // if (this.dtStartModel) {
+      //   url += "&dt_start=" + this.dtStartModel +"T00:00:00"
+      // }
+      if (this.dtEndModel) {
+        url += "&dt_end=" + this.dtEndModel +"T23:59:59"
+      }
+      fetch(process.env.baseUrl + url)
+        .then((response) => {
+          return response.json()
+        })
+        .then((data) => {
+
+          let sourcesNew = {}
+          let typesNew = {}
+          let clientChecker = {}
+          data.results.sort( (a, b) => {
+            if ( a.dt_provision < b.dt_provision ){
+              return -1;
+            }
+            return 1;
+          });
+
+          for (let key in data.results) {
+
+            if (!data.results[key].client) {
+              continue;
+            }
+            if (clientChecker[data.results[key].client.id]) {
+              continue
+            }
+            clientChecker[data.results[key].client.id] = true;
+            if (this.dtStartModel !== "") {
+              var dtProvision = new Date(Date.parse(data.results[key].dt_provision));
+              var dtStart = new Date(Date.parse(this.dtStartModel));
+              if (dtStart > dtProvision) {
+                continue;
+              }
+            }
+            if (data.results[key].client.subcategory !== undefined) {
+              if (sourcesNew[data.results[key].client.subcategory["name"]] === undefined) {
+                sourcesNew[data.results[key].client.subcategory["name"]] = 0;
+              }
+              sourcesNew[data.results[key].client.subcategory["name"]] += data.results[key].price;
+            }
+
+            if (data.results[key].client.type_client !== undefined) {
+              if (typesNew[data.results[key].client.type_client["name"]] === undefined) {
+                typesNew[data.results[key].client.type_client["name"]] = 0;
+              }
+              typesNew[data.results[key].client.type_client["name"]] += data.results[key].price;
+            }
+
+
+
+          }
+
+
+          self.sourcesOperationsNewChart.labels = [];
+          self.sourcesOperationsNewChart.datasets = [{data: [], backgroundColor: []}];
+          let counter = 0;
+          for (let key in sourcesNew) {
+            self.sourcesOperationsNewChart.labels.push(key);
+            self.sourcesOperationsNewChart.datasets[0].data.push(sourcesNew[key]);
+            self.sourcesOperationsNewChart.datasets[0].backgroundColor.push(self.colors[counter]);
+            counter++;
+          }
+
+          self.typeOperationsNewClientChart.labels = [];
+          self.typeOperationsNewClientChart.datasets = [{data: [], backgroundColor: []}];
+          counter = 0;
+          for (let key in typesNew) {
+            self.typeOperationsNewClientChart.labels.push(key);
+            self.typeOperationsNewClientChart.datasets[0].data.push(typesNew[key]);
+            self.typeOperationsNewClientChart.datasets[0].backgroundColor.push(self.colors[counter]);
+            counter++;
+          }
+
+          self.readyNewOperation = true;
 
         })
     },
@@ -204,11 +306,11 @@ export default {
           let types = {}
           for (let key in data.results) {
 
-            if (data.results[key].category != undefined) {
-              if (sources[data.results[key].category["name"]] == undefined) {
-                sources[data.results[key].category["name"]] = 0;
+            if (data.results[key].subcategory != undefined) {
+              if (sources[data.results[key].subcategory["name"]] == undefined) {
+                sources[data.results[key].subcategory["name"]] = 0;
               }
-              sources[data.results[key].category["name"]]++;
+              sources[data.results[key].subcategory["name"]]++;
             }
 
             if (data.results[key].type_client != undefined) {

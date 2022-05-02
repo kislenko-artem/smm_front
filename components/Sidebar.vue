@@ -8,6 +8,9 @@
           <NuxtLink to="/business/categories">Категории</NuxtLink>
         </li>
         <li>
+          <NuxtLink to="/business/subcategories">Подкатегории</NuxtLink>
+        </li>
+        <li>
           <NuxtLink to="/business/clients">Клиенты</NuxtLink>
         </li>
         <li>

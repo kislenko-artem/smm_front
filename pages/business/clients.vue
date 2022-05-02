@@ -42,10 +42,10 @@
         <textarea v-model.trim="commentModel" placeholder="Комментарии"></textarea>
       </div>
       <div>
-        <label>Источник</label>
-        <select v-model.trim="sourceModel">
-          <option value="" disabled selected>Источник появления</option>
-          <option v-for="c in clients_sources" :value="c.id">{{ c.name }}</option>
+        <label>Подкатегория</label>
+        <select v-model.trim="noteModel">
+          <option value="" disabled selected>Подкатегория</option>
+          <option v-for="c in subcategoriesByCatID(sourceModel)" :value="c.id">{{ c.name }}</option>
         </select>
       </div>
       <div>
@@ -54,14 +54,6 @@
           <option value="" disabled selected>Тип</option>
           <option v-for="c in clients_types" :value="c.id">{{ c.name }}</option>
         </select>
-      </div>
-      <div>
-        <label>Возраст</label>
-        <input type="text" value="" v-model.trim="ageModel" placeholder="Возраст"/>
-      </div>
-      <div>
-        <label>Оценка</label>
-        <input type="text" value="" v-model.trim="noteModel" placeholder="Оценка"/>
       </div>
       <div>
         <label>Дата появления</label>
@@ -87,10 +79,10 @@
         <textarea v-model.trim="commentModel" placeholder="Комментарии"></textarea>
       </div>
       <div>
-        <label>Источник</label>
-        <select v-model.trim="sourceModel">
-          <option value="" disabled selected>Источник появления</option>
-          <option v-for="c in clients_sources" :value="c.id">{{ c.name }}</option>
+        <label>Подкатегория</label>
+        <select v-model.trim="noteModel">
+          <option value="" disabled selected>Подкатегория</option>
+          <option v-for="c in subcategoriesByCatID(sourceModel)" :value="c.id">{{ c.name }}</option>
         </select>
       </div>
       <div>
@@ -99,14 +91,6 @@
           <option value="" disabled selected>Тип</option>
           <option v-for="c in clients_types" :value="c.id">{{ c.name }}</option>
         </select>
-      </div>
-      <div>
-        <label>Возраст</label>
-        <input type="text" value="" v-model.trim="ageModel" placeholder="Возраст"/>
-      </div>
-      <div>
-        <label>Оценка</label>
-        <input type="text" value="" v-model.trim="noteModel" placeholder="Оценка"/>
       </div>
       <div>
         <label>Дата</label>
@@ -126,16 +110,10 @@
         <span>Телефон:</span><span>{{ phoneModel | notEmpty }}</span>
       </div>
       <div class="show-element">
-        <span>Оценка:</span><span>{{ noteModel | notEmpty }}</span>
-      </div>
-      <div class="show-element">
-        <span>Откуда:</span><span>{{ sourceName(sourceModel) }}</span>
+        <span>Подкатегория:</span><span>{{ noteModel | notEmpty }}</span>
       </div>
       <div class="show-element">
         <span>Тип:</span><span>{{ typeName(typeModel) }}</span>
-      </div>
-      <div class="show-element">
-        <span>Возраст:</span><span>{{ ageModel | notEmpty }}</span>
       </div>
       <div class="show-element">
         <span>Дата появления:</span><span>{{ dtAppearModel | notEmpty }}</span>
@@ -177,7 +155,7 @@ export default {
       showEditPopUp: false,
       showShowPopUp: false,
 
-      clientsColumns: ["Имя", "Телефон", "Возраст", "Дата Связи", "Откуда", "Тип", "Возраст", "Комментарий", "Оценка",
+      clientsColumns: ["Имя", "Телефон", "Дата Связи", "Тип", "Комментарий", "Подкатегория",
         "method:Удл.:id:delContent", "method:Ред.:id:editToggleContent", "method:Посм.:id:showToggleContent"],
       incomesColumns: ["Услуга", "Стоимость", "Комментарий", "Дата оказания"],
       methodsList: {},
@@ -186,13 +164,14 @@ export default {
       incomes: [],
       clients_sources: [],
       clients_types: [],
+      subcategories: {},
 
       nameModel: "",
       phoneModel: "",
       commentModel: "",
       ageModel: 0,
       dtAppearModel: "",
-      sourceModel: 0,
+      sourceModel: 16,
       typeModel: 0,
       noteModel: 5,
       idModel: 0,
@@ -200,6 +179,7 @@ export default {
   },
   mounted() {
     this.getCategories();
+    this.getSubCategories();
     this.getTypes();
     this.getContent();
     this.getIncomes();
@@ -272,6 +252,12 @@ export default {
       }
       return newIncomes
     },
+    subcategoriesByCatID(catID) {
+      if (!catID) {
+        return [];
+      }
+      return this.subcategories[catID];
+    },
     fillModels(id) {
       let data = {};
       for (let key in this.clients) {
@@ -284,11 +270,10 @@ export default {
       this.nameModel = data["Имя"];
       this.phoneModel = data["Телефон"];
       this.commentModel = data["Комментарий"];
-      this.ageModel = data["Возраст"];
       this.dtAppearModel = data["Дата Связи"];
-      this.sourceModel = data["category_id"];
+      this.sourceModel = 16;
       this.typeModel = data["type_client"];
-      this.noteModel = data["Оценка"];
+      this.noteModel = data["Подкатегория"];
       this.idModel = id;
     },
     editToggleContent(id) {
@@ -315,8 +300,6 @@ export default {
               "Имя": data.results[key]["name"],
               "Телефон": data.results[key]["phone"],
               "Комментарий": data.results[key]["comments"],
-              "Возраст": data.results[key]["age"],
-              "Оценка": data.results[key]["note"],
               "id": data.results[key]["id"],
             }
             if (data.results[key]["dt_appearance"]) {
@@ -325,6 +308,10 @@ export default {
             if (data.results[key]["category"]) {
               d["Откуда"] = data.results[key]["category"]["name"]
               d["category_id"] = data.results[key]["category"]["id"]
+            }
+            if (data.results[key]["subcategory"]) {
+              d["Подкатегория"] = data.results[key]["subcategory"]["name"]
+              d["subcategory_id"] = data.results[key]["subcategory"]["id"]
             }
             if (data.results[key]["type_client"]) {
               d["Тип"] = data.results[key]["type_client"]["name"]
@@ -379,10 +366,10 @@ export default {
           phone: self.phoneModel,
           comments: self.commentModel,
           category_id: self.sourceModel,
+          subcategory_id: self.noteModel,
           type_client_id: self.typeModel,
           age: self.ageModel,
           dt_appearance: self.dtAppearModel.replace("T", " ") + ":00",
-          note: self.noteModel,
         })
       })
         .then((data) => {
@@ -399,10 +386,10 @@ export default {
           phone: self.phoneModel,
           comments: self.commentModel,
           category_id: self.sourceModel,
+          subcategory_id: self.noteModel,
           type_client_id: self.typeModel,
           age: self.ageModel,
           dt_appearance: self.dtAppearModel.replace("T", " "),
-          note: self.noteModel,
         })
       })
         .then((data) => {
@@ -429,6 +416,21 @@ export default {
         })
         .then((data) => {
           self.clients_sources = data.results;
+        })
+    },
+    getSubCategories() {
+      const self = this;
+      fetch(process.env.baseUrl + "/v0/business/subcategories/all")
+        .then((response) => {
+          return response.json()
+        })
+        .then((data) => {
+          for (let key in data.results) {
+            if (self.subcategories[data.results[key].category.id] == undefined) {
+              self.subcategories[data.results[key].category.id] = [];
+            }
+            self.subcategories[data.results[key].category.id].push(data.results[key]);
+          }
         })
     },
     getTypes() {

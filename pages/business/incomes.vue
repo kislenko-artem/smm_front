@@ -42,6 +42,13 @@
         </select>
       </div>
       <div>
+        <label>Подкатегория</label>
+        <select v-model.trim="subcategoryModel">
+          <option value="" disabled selected>Подкатегория</option>
+          <option v-for="c in subcategoriesByCatID(serviceModel)" :value="c.id">{{ c.name }}</option>
+        </select>
+      </div>
+      <div>
         <label>Клиент</label>
         <select v-model.trim="clientModel">
           <option  value=""  disabled selected>Клиент</option>
@@ -79,6 +86,13 @@
         </select>
       </div>
       <div>
+        <label>Подкатегория</label>
+        <select v-model.trim="subcategoryModel">
+          <option value="" disabled selected>Подкатегория</option>
+          <option v-for="c in subcategoriesByCatID(serviceModel)" :value="c.id">{{ c.name }}</option>
+        </select>
+      </div>
+      <div>
         <label>Клиент</label>
         <select v-model.trim="clientModel">
           <option  value=""  disabled selected>Клиент</option>
@@ -110,6 +124,9 @@
     <div class="pop-up" v-if="showShowPopUp">
       <div class="show-element">
         <span>Название:</span><span>{{ sourceName(serviceModel) }}</span>
+      </div>
+      <div class="show-element">
+        <span>Подкатегория:</span><span>{{ subcategoryModel | notEmpty }}</span>
       </div>
       <div class="show-element">
         <span>Цена:</span><span>{{ priceModel | notEmpty }}</span>
@@ -153,18 +170,20 @@ export default {
       showEditPopUp: false,
       showShowPopUp: false,
 
-      clientsColumns: ["Услуга",  "Стоимость", "Комментарий", "Клиент", "Дата", "Продолжительность",
+      clientsColumns: ["Услуга", "Подкатегория", "Стоимость", "Комментарий", "Клиент", "Дата", "Продолжительность",
         "method:Удл.:id:delContent", "method:Ред.:id:editToggleContent", "method:Посм.:id:showToggleContent"],
       methodsList: {},
 
       clients: [],
       clientsSources: [],
+      subcategories: {},
       services: [],
 
       priceModel: "",
       commentModel: "",
       clientModel: 0,
       serviceModel: 0,
+      subcategoryModel: 0,
       durationModel: 2,
       dtProvisionModel: "",
       idModel: 0,
@@ -182,6 +201,7 @@ export default {
     this.getContent();
     this.getServices();
     this.getClients();
+    this.getSubCategories();
     this.methodsList = {"delContent": this.delContent, "editToggleContent": this.editToggleContent, "showToggleContent": this.showToggleContent};
   },
   methods: {
@@ -206,6 +226,12 @@ export default {
         break;
       }
       return name;
+    },
+    subcategoriesByCatID(catID) {
+      if (!catID) {
+        return [];
+      }
+      return this.subcategories[catID];
     },
     toggleWin() {
       this.showPopUp = !this.showPopUp;
@@ -239,6 +265,7 @@ export default {
       this.priceModel = data["Стоимость"];
       this.clientModel = data["client_id"];
       this.serviceModel = data["category_id"];
+      this.subcategoryModel = data["subcategory_id"];
       this.commentModel = data["Комментарий"];
       this.dtProvisionModel = data["Дата"];
       this.durationModel = data["Продолжительность"];
@@ -284,6 +311,10 @@ export default {
             if (data.results[key]["dt_provision"]) {
               d["Дата"] = data.results[key]["dt_provision"]
             }
+            if (data.results[key]["subcategory"]) {
+              d["Подкатегория"] = data.results[key]["subcategory"]["name"]
+              d["subcategory_id"] = data.results[key]["subcategory"]["id"]
+            }
             if (data.results[key]["client"]) {
               d["Клиент"] = data.results[key]["client"]["name"]
               d["client_id"] = data.results[key]["client"]["id"]
@@ -301,6 +332,7 @@ export default {
           price: self.priceModel,
           comments: self.commentModel,
           category_id: parseInt(self.serviceModel),
+          subcategory_id: parseInt(self.subcategoryModel),
           client_id: parseInt(self.clientModel),
           dt_provision: self.dtProvisionModel.replace("T", " ") + ":00",
           duration: self.durationModel
@@ -319,6 +351,7 @@ export default {
           price: self.priceModel,
           comments: self.commentModel,
           category_id: parseInt(self.serviceModel),
+          subcategory_id: parseInt(self.subcategoryModel),
           client_id: parseInt(self.clientModel),
           dt_provision: self.dtProvisionModel.replace("T", " "),
           duration: self.durationModel
@@ -347,6 +380,21 @@ export default {
         })
         .then((data) => {
           self.clientsSources = data.results;
+        })
+    },
+    getSubCategories() {
+      const self = this;
+      fetch(process.env.baseUrl + "/v0/business/subcategories/all")
+        .then((response) => {
+          return response.json()
+        })
+        .then((data) => {
+          for (let key in data.results) {
+            if (self.subcategories[data.results[key].category.id] == undefined) {
+              self.subcategories[data.results[key].category.id] = [];
+            }
+            self.subcategories[data.results[key].category.id].push(data.results[key]);
+          }
         })
     },
     getServices() {

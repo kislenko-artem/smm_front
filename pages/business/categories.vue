@@ -7,21 +7,6 @@
       </div>
       <div class="categories-main">
         <article>
-          <h4>Источники клиентов</h4>
-          <hr/>
-          <div class="manage-data">
-            <input type="text" value="" id="sourceModel" v-model.trim="sourceModel"/>
-            <button v-on:click="addSource">Добавить источник</button>
-          </div>
-          <hr/>
-          <Grid
-            :heroes="clientsSources"
-            :columns="sourceColumns"
-            :filter-key="searchQuery"
-            :methodsList="methodsList"
-          />
-        </article>
-        <article>
           <h4>Услуги</h4>
           <hr/>
           <div class="manage-data">
@@ -62,10 +47,6 @@ export default {
   data: () => {
     return {
       searchQuery: "",
-      sourceColumns: ["Название", "method:Удалить:id:delSource"],
-      clientsSources: [],
-      methodsList: {},
-      serviceModel: "",
 
       services: [],
       sourceModel: "",
@@ -79,26 +60,17 @@ export default {
     }
   },
   mounted() {
-    this.getCategories("clients_sources", this.clientsSources);
     this.getCategories("services", this.services);
     this.getCategories("types", this.types);
-    this.methodsList["delSource"] = this.delSource;
     this.methodsServiceList["delService"] = this.delService;
     this.methodsTypeList["delType"] = this.delType;
   },
   methods: {
-    addSource() {
-      this.addCategory("clients_sources", this.clientsSources, this.sourceModel);
-    },
     addService() {
       this.addCategory("services", this.services, this.serviceModel);
     },
     addType() {
       this.addCategory("types", this.types, this.typeModel);
-    },
-
-    delSource(id) {
-      this.delCategory("clients_sources", this.clientsSources, id);
     },
     delService(id) {
       this.delCategory("services", this.services, id);
@@ -114,16 +86,6 @@ export default {
           return response.json()
         })
         .then((data) => {
-
-          if (model === self.clientsSources) {
-            self.clientsSources = [];
-            for (let key in data.results) {
-              self.clientsSources.push({
-                "Название": data.results[key]["name"],
-                "id": data.results[key]["id"],
-              });
-            }
-          }
 
           if (model === self.services) {
             self.services = [];
