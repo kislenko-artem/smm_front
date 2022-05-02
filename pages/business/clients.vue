@@ -42,9 +42,9 @@
         <textarea v-model.trim="commentModel" placeholder="Комментарии"></textarea>
       </div>
       <div>
-        <label>Подкатегория</label>
+        <label>Подкат-рия</label>
         <select v-model.trim="noteModel">
-          <option value="" disabled selected>Подкатегория</option>
+          <option value="" disabled selected>Подкат-рия</option>
           <option v-for="c in subcategoriesByCatID(sourceModel)" :value="c.id">{{ c.name }}</option>
         </select>
       </div>
@@ -79,9 +79,9 @@
         <textarea v-model.trim="commentModel" placeholder="Комментарии"></textarea>
       </div>
       <div>
-        <label>Подкатегория</label>
+        <label>Подкат-рия</label>
         <select v-model.trim="noteModel">
-          <option value="" disabled selected>Подкатегория</option>
+          <option value="" disabled selected>Подкат-рия</option>
           <option v-for="c in subcategoriesByCatID(sourceModel)" :value="c.id">{{ c.name }}</option>
         </select>
       </div>
@@ -110,7 +110,7 @@
         <span>Телефон:</span><span>{{ phoneModel | notEmpty }}</span>
       </div>
       <div class="show-element">
-        <span>Подкатегория:</span><span>{{ noteModel | notEmpty }}</span>
+        <span>Подкат-рия:</span><span>{{ noteModel | notEmpty }}</span>
       </div>
       <div class="show-element">
         <span>Тип:</span><span>{{ typeName(typeModel) }}</span>
@@ -155,7 +155,7 @@ export default {
       showEditPopUp: false,
       showShowPopUp: false,
 
-      clientsColumns: ["Имя", "Телефон", "Дата Связи", "Тип", "Комментарий", "Подкатегория",
+      clientsColumns: ["Имя", "Телефон", "Дата Связи", "Тип", "Комментарий", "Подкат-рия",
         "method:Удл.:id:delContent", "method:Ред.:id:editToggleContent", "method:Посм.:id:showToggleContent"],
       incomesColumns: ["Услуга", "Стоимость", "Комментарий", "Дата оказания"],
       methodsList: {},
@@ -273,7 +273,7 @@ export default {
       this.dtAppearModel = data["Дата Связи"];
       this.sourceModel = 16;
       this.typeModel = data["type_client"];
-      this.noteModel = data["Подкатегория"];
+      this.noteModel = data["subcategory_id"];
       this.idModel = id;
     },
     editToggleContent(id) {
@@ -310,7 +310,7 @@ export default {
               d["category_id"] = data.results[key]["category"]["id"]
             }
             if (data.results[key]["subcategory"]) {
-              d["Подкатегория"] = data.results[key]["subcategory"]["name"]
+              d["Подкат-рия"] = data.results[key]["subcategory"]["name"]
               d["subcategory_id"] = data.results[key]["subcategory"]["id"]
             }
             if (data.results[key]["type_client"]) {
