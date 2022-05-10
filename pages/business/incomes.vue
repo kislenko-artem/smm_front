@@ -495,12 +495,28 @@ export default {
 }
 
 @media screen and (max-width: 450px) {
-
+  .income-table th {
+    font-size: 8px;
+  }
+  .income-table td span {
+    font-size: 8px;
+  }
+  #content button {
+    font-size: 8px;
+    margin: 0;
+  }
   .income-table  th:nth-child(3) {
     display: none;
   }
 
   .income-table  td:nth-child(3) {
+    display: none;
+  }
+  .income-table  th:nth-child(2) {
+    display: none;
+  }
+
+  .income-table  td:nth-child(2) {
     display: none;
   }
 
@@ -512,13 +528,36 @@ export default {
     display: none;
   }
 
+.income-table  td, .income-table  th {
+    min-width: 20px;
+    width: 20px;
 
-  .income-table  th:nth-child(6) {
-    display: none;
+}
+  
+  .income-table  td:nth-child(1) span {
+    font-size: 8px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    display: block;
+    width: 30px;
+  }
+  .income-table  td:nth-child(5) span {
+    font-size: 8px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    display: block;
+    width: 40px;
   }
 
-  .income-table  td:nth-child(6) {
-    display: none;
+  .income-table  td:nth-child(6) span {
+    font-size: 8px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    display: block;
+    width: 55px;
   }
 
   .income-table  th:nth-child(7) {
