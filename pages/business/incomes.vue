@@ -496,13 +496,13 @@ export default {
 
 @media screen and (max-width: 450px) {
   .income-table th {
-    font-size: 8px;
+    font-size: 10px;
   }
   .income-table td span {
-    font-size: 8px;
+    font-size: 10px;
   }
   #content button {
-    font-size: 8px;
+    font-size: 10px;
     margin: 0;
   }
   .income-table  th:nth-child(3) {
@@ -541,14 +541,6 @@ export default {
     white-space: nowrap;
     display: block;
     width: 30px;
-  }
-  .income-table  td:nth-child(5) span {
-    font-size: 8px;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-    display: block;
-    width: 40px;
   }
 
   .income-table  td:nth-child(6) span {
