@@ -580,28 +580,6 @@ export default {
     display: none;
   }
 
-  .clients-table th:nth-child(9) {
-    display: none;
-  }
-
-  .clients-table td:nth-child(9) {
-    display: none;
-  }
-
-  .clients-table th:nth-child(10) {
-    display: none;
-  }
-
-  .clients-table td:nth-child(10) {
-    display: none;
-  }
-  .clients-table th:nth-child(11) {
-    display: none;
-  }
-
-  .clients-table td:nth-child(11) {
-    display: none;
-  }
 }
 
 </style>
