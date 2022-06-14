@@ -505,13 +505,14 @@ export default {
     font-size: 10px;
     margin: 0;
   }
-  .income-table  th:nth-child(3) {
+  .income-table  th:nth-child(1) {
     display: none;
   }
 
-  .income-table  td:nth-child(3) {
+  .income-table  td:nth-child(1) {
     display: none;
   }
+ 
   .income-table  th:nth-child(2) {
     display: none;
   }
@@ -565,6 +566,14 @@ export default {
   }
 
   .income-table td:nth-child(8) {
+    display: none;
+  }
+
+  .income-table  th:nth-child(9) {
+    display: none;
+  }
+
+  .income-table td:nth-child(9) {
     display: none;
   }
 }
