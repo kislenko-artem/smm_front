@@ -28,13 +28,13 @@
           <td>{{ parseInt(item.income/item.total_count) }}</td>
           <td>{{ item.total_count }}</td>
           <td>
-            {{ c_filter(item.types_client, 'Клиент') }} / {{ c_filter(item.new_types_client, 'Клиент') }}
+            {{ c_filter(item.types_client, 'Маникюр') }} / {{ c_filter(item.new_types_client, 'Маникюр') }}
           </td>
           <td>
             {{ c_filter(item.types_client, 'Модель') }} / {{ c_filter(item.new_types_client, 'Модель') }}
           </td>
           <td>
-            {{ c_filter(item.types_client, 'Ученик') }} / {{ c_filter(item.new_types_client, 'Ученик') }}
+            {{ c_filter(item.types_client, 'Обучение') }} / {{ c_filter(item.new_types_client, 'Обучение') }}
           </td>
 <!--          <td><a :href = "'https://vk.com/' + item.screen_name" target="_blank">{{ item.name }}</a></td>-->
 <!--          <td><img :src=item.photo_50 /></td>-->
@@ -136,7 +136,7 @@ export default {
             return 1;
           });
 
-          var months = ["Январь", "Февраль", "Март", "Апрель", "Мая", "Июнь", "Июль", "Август", "Сентябрь", "Октябрь", "Ноябрь", "Декабрь", ]
+          var months = ["Январь", "Февраль", "Март", "Апрель", "Май", "Июнь", "Июль", "Август", "Сентябрь", "Октябрь", "Ноябрь", "Декабрь", ]
           var agregator = {}
           var uniqChecker = {}
           for (let key in data.results) {
@@ -154,11 +154,12 @@ export default {
             }
             agregator[keyDate].income += numPrice;
             agregator[keyDate].total_count += 1;
-            var client_type_name = data.results[key].client.type_client.name;
+            var client_type_name = data.results[key].category.name;
             if (agregator[keyDate].types_client[client_type_name] === undefined) {
               agregator[keyDate].types_client[client_type_name] = 0;
             }
             agregator[keyDate].types_client[client_type_name] += 1;
+            
             var uniqKey = data.results[key].client.name + data.results[key].client.phone;
             if (uniqChecker[uniqKey] !== undefined) {
               continue;
