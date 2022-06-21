@@ -18,9 +18,9 @@
           <td>Поступления</td>
           <td>Средн. Чек</td>
           <td>Всего чел-к</td>
-          <td>Клиент</td>
-          <td>Модель</td>
-          <td>Ученик</td>
+          <td>Клиент / Нов.</td>
+          <td>Модель / Нов.</td>
+          <td>Ученик / Нов.</td>
         </tr>
         <tr v-for="(item, index) in data">
           <td>{{ index }}</td>
@@ -28,13 +28,13 @@
           <td>{{ parseInt(item.income/item.total_count) }}</td>
           <td>{{ item.total_count }}</td>
           <td>
-            {{ c_filter(item.types_client, 'Клиент') }}
+            {{ c_filter(item.types_client, 'Клиент') }} / {{ c_filter(item.new_types_client, 'Клиент') }}
           </td>
           <td>
-            {{ c_filter(item.types_client, 'Модель') }}
+            {{ c_filter(item.types_client, 'Модель') }} / {{ c_filter(item.new_types_client, 'Модель') }}
           </td>
           <td>
-            {{ c_filter(item.types_client, 'Ученик') }}
+            {{ c_filter(item.types_client, 'Ученик') }} / {{ c_filter(item.new_types_client, 'Ученик') }}
           </td>
 <!--          <td><a :href = "'https://vk.com/' + item.screen_name" target="_blank">{{ item.name }}</a></td>-->
 <!--          <td><img :src=item.photo_50 /></td>-->
@@ -107,7 +107,7 @@ export default {
         }
         return data[key];
       }
-      return ""
+      return "-"
     },
     updateData() {
       this.getOperations();
@@ -138,6 +138,7 @@ export default {
 
           var months = ["Январь", "Февраль", "Март", "Апрель", "Мая", "Июнь", "Июль", "Август", "Сентябрь", "Октябрь", "Ноябрь", "Декабрь", ]
           var agregator = {}
+          var uniqChecker = {}
           for (let key in data.results) {
             var numPrice = parseFloat(data.results[key].price)
             if (numPrice < 0) {
@@ -146,7 +147,7 @@ export default {
             var dt = new Date(Date.parse(data.results[key].dt_provision));
             var keyDate = dt.getFullYear().toString() + " " + months[dt.getMonth()];
             if (agregator[keyDate] === undefined) {
-              agregator[keyDate] = {"income":0, "avg_income": 0, "total_count": 0, "types_client": {}}
+              agregator[keyDate] = {"income":0, "avg_income": 0, "total_count": 0, "types_client": {}, "new_types_client": {}}
             }
             if (!data.results[key].client) {
               continue
@@ -158,6 +159,15 @@ export default {
               agregator[keyDate].types_client[client_type_name] = 0;
             }
             agregator[keyDate].types_client[client_type_name] += 1;
+            var uniqKey = data.results[key].client.name + data.results[key].client.phone;
+            if (uniqChecker[uniqKey] !== undefined) {
+              continue;
+            }
+            uniqChecker[uniqKey] = true;
+            if (agregator[keyDate].new_types_client[client_type_name] === undefined) {
+              agregator[keyDate].new_types_client[client_type_name] = 0;
+            }
+            agregator[keyDate].new_types_client[client_type_name] += 1;
           }
           self.data = agregator;
 
