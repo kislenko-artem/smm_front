@@ -149,9 +149,7 @@ export default {
             if (agregator[keyDate] === undefined) {
               agregator[keyDate] = {"income":0, "avg_income": 0, "total_count": 0, "types_client": {}, "new_types_client": {}}
             }
-            if (!data.results[key].client) {
-              continue
-            }
+            
             agregator[keyDate].income += numPrice;
             agregator[keyDate].total_count += 1;
             var client_type_name = data.results[key].category.name;
@@ -160,7 +158,9 @@ export default {
             }
             agregator[keyDate].types_client[client_type_name] += 1;
             
-            var uniqKey = data.results[key].client.name + data.results[key].client.phone;
+            var clientName = data.results[key].client ? data.results[key].client.name : ""
+            var clientPhone = data.results[key].client ? data.results[key].client.phone : ""
+            var uniqKey = clientName + clientPhone;
             if (uniqChecker[uniqKey] !== undefined) {
               continue;
             }
