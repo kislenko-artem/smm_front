@@ -28,13 +28,13 @@
           <td>{{ parseInt(item.income/item.total_count) }}</td>
           <td>{{ item.total_count }}</td>
           <td>
-            {{ c_filter(item.types_client, 'Маникюр') }} / {{ c_filter(item.new_types_client, 'Маникюр') }}
+            {{ c_filter(item.types_client, 'Клиент') }} / {{ c_filter(item.new_types_client, 'Клиент') }}
           </td>
           <td>
             {{ c_filter(item.types_client, 'Модель') }} / {{ c_filter(item.new_types_client, 'Модель') }}
           </td>
           <td>
-            {{ c_filter(item.types_client, 'Обучение') }} / {{ c_filter(item.new_types_client, 'Обучение') }}
+            {{ c_filter(item.types_client, 'Ученик') }} / {{ c_filter(item.new_types_client, 'Ученик') }}
           </td>
 <!--          <td><a :href = "'https://vk.com/' + item.screen_name" target="_blank">{{ item.name }}</a></td>-->
 <!--          <td><img :src=item.photo_50 /></td>-->
@@ -152,7 +152,11 @@ export default {
             
             agregator[keyDate].income += numPrice;
             agregator[keyDate].total_count += 1;
-            var client_type_name = data.results[key].category.name;
+            if (!data.results[key].client) {
+              console.log(data.results[key]);
+              continue;
+            }
+            var client_type_name = data.results[key].client.type_client.name;
             if (agregator[keyDate].types_client[client_type_name] === undefined) {
               agregator[keyDate].types_client[client_type_name] = 0;
             }

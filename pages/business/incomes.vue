@@ -35,9 +35,9 @@
 
     <div class="pop-up" v-if="showPopUp">
       <div>
-        <label>Услуга\Расход</label>
+        <label>Категория</label>
         <select v-model.trim="serviceModel">
-          <option  value=""  disabled selected>Услуга\Расход</option>
+          <option  value=""  disabled selected>Категория</option>
           <option v-for="c in services" :value="c.id">{{ c.name }}</option>
         </select>
       </div>
@@ -79,9 +79,9 @@
 
     <div class="pop-up" v-if="showEditPopUp">
       <div>
-        <label>Услуга\Расход</label>
+        <label>Категория</label>
         <select v-model.trim="serviceModel">
-          <option  value=""  disabled selected>Услуга\Расход</option>
+          <option  value=""  disabled selected>Категория</option>
           <option v-for="c in services" :value="c.id">{{ c.name }}</option>
         </select>
       </div>
@@ -170,7 +170,7 @@ export default {
       showEditPopUp: false,
       showShowPopUp: false,
 
-      clientsColumns: ["Услуга", "Подкатегория", "Стоимость", "Комментарий", "Клиент", "Дата", "Продолжительность",
+      clientsColumns: ["Категория", "Подкатегория", "Стоимость", "Комментарий", "Клиент", "Дата", "Продолжительность",
         "method:Удл.:id:delContent", "method:Ред.:id:editToggleContent", "method:Посм.:id:showToggleContent"],
       methodsList: {},
 
@@ -302,7 +302,7 @@ export default {
             self.profitModel += parseFloat(data.results[key]["price"]);
             let d = {
               "Стоимость": data.results[key]["price"],
-              "Услуга": data.results[key]["category"]["name"],
+              "Категория": data.results[key]["category"]["name"],
               "Комментарий": data.results[key]["comments"],
               "Продолжительность": data.results[key]["duration"],
               "id": data.results[key]["id"],

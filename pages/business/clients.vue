@@ -171,7 +171,7 @@ export default {
       commentModel: "",
       ageModel: 0,
       dtAppearModel: "",
-      sourceModel: 16,
+      sourceModel: 29,
       typeModel: 0,
       noteModel: 5,
       idModel: 0,
@@ -256,6 +256,7 @@ export default {
       if (!catID) {
         return [];
       }
+      console.log(this.subcategories, catID);
       return this.subcategories[catID];
     },
     fillModels(id) {
@@ -271,7 +272,7 @@ export default {
       this.phoneModel = data["Телефон"];
       this.commentModel = data["Комментарий"];
       this.dtAppearModel = data["Дата Связи"];
-      this.sourceModel = 16;
+      this.sourceModel = 29;
       this.typeModel = data["type_client"];
       this.noteModel = data["subcategory_id"];
       this.idModel = id;
@@ -426,6 +427,9 @@ export default {
         })
         .then((data) => {
           for (let key in data.results) {
+            if (!data.results[key].category) {
+              continue;
+            }
             if (self.subcategories[data.results[key].category.id] == undefined) {
               self.subcategories[data.results[key].category.id] = [];
             }

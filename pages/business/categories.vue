@@ -7,11 +7,11 @@
       </div>
       <div class="categories-main">
         <article>
-          <h4>Услуги</h4>
+          <h4>Категории</h4>
           <hr/>
           <div class="manage-data">
             <input type="text" value="" id="serviceModel" v-model.trim="serviceModel"/>
-            <button v-on:click="addService">Добавить услугу</button>
+            <button v-on:click="addService">Добавить</button>
           </div>
           <hr/>
           <Grid
@@ -26,7 +26,7 @@
           <hr/>
           <div class="manage-data">
             <input type="text" value="" id="typeModel" v-model.trim="typeModel"/>
-            <button v-on:click="addType">Добавить тип</button>
+            <button v-on:click="addType">Добавить</button>
           </div>
           <hr/>
           <Grid
@@ -57,6 +57,8 @@ export default {
       typeModel: "",
       typeColumns: ["Название", "method:Удалить:id:delType"],
       methodsTypeList: {},
+
+      serviceModel: "",
     }
   },
   mounted() {

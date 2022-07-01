@@ -73,8 +73,16 @@ export default {
 
           self.subcategories = [];
           for (let key in data.results) {
+            if (data.results[key] == null) {
+              continue;
+            }
+
+            var nameCategory = "без категории"
+            if (data.results[key]["category"] != null) {
+              nameCategory = data.results[key]["category"]["name"];
+            }
             self.subcategories.push({
-              "Категория": data.results[key]["category"]["name"],
+              "Категория": nameCategory,
               "Название": data.results[key]["name"],
               "id": data.results[key]["id"],
             });

@@ -245,6 +245,9 @@ export default {
               }
             }
             if (data.results[key].client.subcategory !== undefined) {
+              if (!data.results[key].client.subcategory) {
+                continue
+              }
               if (sourcesNew[data.results[key].client.subcategory["name"]] === undefined) {
                 sourcesNew[data.results[key].client.subcategory["name"]] = 0;
               }
