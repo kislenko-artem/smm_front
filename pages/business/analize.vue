@@ -44,6 +44,10 @@
           <h4>Доход по источникам (новые)</h4>
           <PieChart :chartData="typeOperationsNewClientChart"></PieChart>
         </div>
+        <div>
+          <h4>Расходы</h4>
+          <PieChart :chartData="expensesChart"></PieChart>
+        </div>
       </div>
 
       <div class="chart-item-line" v-if="readyOperation">
@@ -82,6 +86,7 @@ export default {
       incomesChart: {},
       sourcesOperationsChart:{},
       typeOperationsClientChart:{},
+      expensesChart: {},
       readyOperation: false,
 
       typeOperationsNewClientChart:{},
@@ -122,6 +127,7 @@ export default {
           let price = 0;
           let positivePrice = 0;
           let positiveOperations = {}
+          let negativeOperations = {}
           data.results.sort( (a, b) => {
             if ( a.dt_provision < b.dt_provision ){
               return -1;
@@ -144,6 +150,12 @@ export default {
               prevMonth = dt.getMonth();
               positivePrice += numPrice;
               positiveOperations[data.results[key].dt_provision] = positivePrice;
+            } else {
+              let name = data.results[key].subcategory.name;
+              if (negativeOperations[name] == undefined) {
+                negativeOperations[name] = 0;
+              }
+              negativeOperations[name] += numPrice;
             }
 
             if (data.results[key].client) {
@@ -164,6 +176,16 @@ export default {
             }
           }
 
+          self.expensesChart.labels = [];
+          self.expensesChart.datasets = [{label: "Расходы", data: [], backgroundColor: []}];
+          let counter = 0;
+          for (let key in negativeOperations) {
+            self.expensesChart.labels.push(key);
+            self.expensesChart.datasets[0].data.push(negativeOperations[key]);
+            self.expensesChart.datasets[0].backgroundColor.push(self.colors[counter]);
+            counter += 1;
+          }
+
           self.operationsChart.labels = [];
           self.operationsChart.datasets = [{label: "Прибыль", data: []}];
 
@@ -180,7 +202,7 @@ export default {
 
           self.sourcesOperationsChart.labels = [];
           self.sourcesOperationsChart.datasets = [{data: [], backgroundColor: []}];
-          let counter = 0;
+          counter = 0;
           for (let key in sources) {
             self.sourcesOperationsChart.labels.push(key);
             self.sourcesOperationsChart.datasets[0].data.push(sources[key]);
