@@ -35,6 +35,13 @@
 
     <div class="pop-up" v-if="showPopUp">
       <div>
+        <label>Филиал</label>
+        <select v-model.trim="officeModel">
+          <option value="" disabled selected>Филиал</option>
+          <option v-for="c in offices" :value="c.id">{{ c.name }}</option>
+        </select>
+      </div>
+      <div>
         <label>Категория</label>
         <select v-model.trim="serviceModel">
           <option  value=""  disabled selected>Категория</option>
@@ -78,6 +85,13 @@
     </div>
 
     <div class="pop-up" v-if="showEditPopUp">
+      <div>
+        <label>Филиал</label>
+        <select v-model.trim="officeModel">
+          <option value="" disabled selected>Филиал</option>
+          <option v-for="c in offices" :value="c.id">{{ c.name }}</option>
+        </select>
+      </div>
       <div>
         <label>Категория</label>
         <select v-model.trim="serviceModel">
@@ -123,10 +137,13 @@
 
     <div class="pop-up" v-if="showShowPopUp">
       <div class="show-element">
-        <span>Название:</span><span>{{ sourceName(serviceModel) }}</span>
+        <span>Название:</span><span>{{ officeName(serviceModel) }}</span>
       </div>
       <div class="show-element">
-        <span>Подкатегория:</span><span>{{ subcategoryModel | notEmpty }}</span>
+        <span>Филиал:</span><span>{{ sourceName(officeModel) | notEmpty }}</span>
+      </div>
+      <div class="show-element">
+        <span>Подкат-рия:</span><span>{{ subcategoryModel | notEmpty }}</span>
       </div>
       <div class="show-element">
         <span>Цена:</span><span>{{ priceModel | notEmpty }}</span>
@@ -170,13 +187,14 @@ export default {
       showEditPopUp: false,
       showShowPopUp: false,
 
-      clientsColumns: ["Категория", "Подкатегория", "Стоимость", "Комментарий", "Клиент", "Дата", "Продолжительность",
+      clientsColumns: ["Филиал", "Категория", "Подкатегория", "Стоимость", "Комментарий", "Клиент", "Дата", "Продолжительность",
         "method:Удл.:id:delContent", "method:Ред.:id:editToggleContent", "method:Посм.:id:showToggleContent"],
       methodsList: {},
 
       clients: [],
       clientsSources: [],
       subcategories: {},
+      offices: [],
       services: [],
 
       priceModel: "",
@@ -184,6 +202,7 @@ export default {
       clientModel: 0,
       serviceModel: 0,
       subcategoryModel: 0,
+      officeModel: 0,
       durationModel: 2,
       dtProvisionModel: "",
       idModel: 0,
@@ -202,9 +221,21 @@ export default {
     this.getServices();
     this.getClients();
     this.getSubCategories();
+    this.getOffices();
     this.methodsList = {"delContent": this.delContent, "editToggleContent": this.editToggleContent, "showToggleContent": this.showToggleContent};
   },
   methods: {
+    officeName(id) {
+      let name = "-";
+      for (let key in this.offices) {
+        if (this.offices[key].id != id) {
+          continue
+        }
+        name = this.offices[key].name;
+        break;
+      }
+      return name;
+    },
     sourceName(id) {
       let name = "-";
       for (let key in this.services) {
@@ -266,6 +297,7 @@ export default {
       this.clientModel = data["client_id"];
       this.serviceModel = data["category_id"];
       this.subcategoryModel = data["subcategory_id"];
+      this.officeModel = data["office_id"];
       this.commentModel = data["Комментарий"];
       this.dtProvisionModel = data["Дата"];
       this.durationModel = data["Продолжительность"];
@@ -319,6 +351,10 @@ export default {
               d["Клиент"] = data.results[key]["client"]["name"]
               d["client_id"] = data.results[key]["client"]["id"]
             }
+            if (data.results[key]["office"]) {
+              d["Филиал"] = data.results[key]["office"]["name"]
+              d["office_id"] = data.results[key]["office"]["id"]
+            }
 
             self.clients.push(d);
           }
@@ -332,6 +368,7 @@ export default {
           price: self.priceModel,
           comments: self.commentModel,
           category_id: parseInt(self.serviceModel),
+          office_id: parseInt(self.officeModel),
           subcategory_id: parseInt(self.subcategoryModel),
           client_id: parseInt(self.clientModel),
           dt_provision: self.dtProvisionModel.replace("T", " ") + ":00",
@@ -351,6 +388,7 @@ export default {
           price: self.priceModel,
           comments: self.commentModel,
           category_id: parseInt(self.serviceModel),
+          office_id: parseInt(self.officeModel),
           subcategory_id: parseInt(self.subcategoryModel),
           client_id: parseInt(self.clientModel),
           dt_provision: self.dtProvisionModel.replace("T", " "),
@@ -380,6 +418,18 @@ export default {
         })
         .then((data) => {
           self.clientsSources = data.results;
+        })
+    },
+    getOffices() {
+      const self = this;
+      fetch(process.env.baseUrl + "/v0/business/offices/all")
+        .then((response) => {
+          return response.json()
+        })
+        .then((data) => {
+          for (let key in data.results) {
+            self.offices.push(data.results[key]);
+          }
         })
     },
     getSubCategories() {

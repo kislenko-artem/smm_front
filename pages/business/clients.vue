@@ -42,6 +42,13 @@
         <textarea v-model.trim="commentModel" placeholder="Комментарии"></textarea>
       </div>
       <div>
+        <label>Филиал</label>
+        <select v-model.trim="officeModel">
+          <option value="" disabled selected>Филиал</option>
+          <option v-for="c in offices" :value="c.id">{{ c.name }}</option>
+        </select>
+      </div>
+      <div>
         <label>Подкат-рия</label>
         <select v-model.trim="noteModel">
           <option value="" disabled selected>Подкат-рия</option>
@@ -79,6 +86,13 @@
         <textarea v-model.trim="commentModel" placeholder="Комментарии"></textarea>
       </div>
       <div>
+        <label>Филиал</label>
+        <select v-model.trim="officeModel">
+          <option value="" disabled selected>Филиал</option>
+          <option v-for="c in offices" :value="c.id">{{ c.name }}</option>
+        </select>
+      </div>
+      <div>
         <label>Подкат-рия</label>
         <select v-model.trim="noteModel">
           <option value="" disabled selected>Подкат-рия</option>
@@ -108,6 +122,9 @@
       </div>
       <div class="show-element">
         <span>Телефон:</span><span>{{ phoneModel | notEmpty }}</span>
+      </div>
+      <div class="show-element">
+        <span>Филиал:</span><span>{{ officeName(officeModel)  }}</span>
       </div>
       <div class="show-element">
         <span>Подкат-рия:</span><span>{{ noteModel | notEmpty }}</span>
@@ -155,7 +172,7 @@ export default {
       showEditPopUp: false,
       showShowPopUp: false,
 
-      clientsColumns: ["Имя", "Телефон", "Дата Связи", "Тип", "Комментарий", "Подкат-рия",
+      clientsColumns: ["Филиал", "Имя", "Телефон", "Дата Связи", "Тип", "Комментарий", "Подкат-рия",
         "method:Удл.:id:delContent", "method:Ред.:id:editToggleContent", "method:Посм.:id:showToggleContent"],
       incomesColumns: ["Услуга", "Стоимость", "Комментарий", "Дата оказания"],
       methodsList: {},
@@ -164,6 +181,7 @@ export default {
       incomes: [],
       clients_sources: [],
       clients_types: [],
+      offices: [],
       subcategories: {},
 
       nameModel: "",
@@ -172,6 +190,7 @@ export default {
       ageModel: 0,
       dtAppearModel: "",
       sourceModel: 29,
+      officeModel: 0,
       typeModel: 0,
       noteModel: 5,
       idModel: 0,
@@ -180,6 +199,7 @@ export default {
   mounted() {
     this.getCategories();
     this.getSubCategories();
+    this.getOffices();
     this.getTypes();
     this.getContent();
     this.getIncomes();
@@ -198,6 +218,17 @@ export default {
     }
   },
   methods: {
+    officeName(id) {
+      let name = "-";
+      for (let key in this.offices) {
+        if (this.offices[key].id != id) {
+          continue
+        }
+        name = this.offices[key].name;
+        break;
+      }
+      return name;
+    },
     sourceName(id) {
       let name = "-";
       for (let key in this.clients_sources) {
@@ -256,7 +287,6 @@ export default {
       if (!catID) {
         return [];
       }
-      console.log(this.subcategories, catID);
       return this.subcategories[catID];
     },
     fillModels(id) {
@@ -275,6 +305,7 @@ export default {
       this.sourceModel = 29;
       this.typeModel = data["type_client"];
       this.noteModel = data["subcategory_id"];
+      this.officeModel = data["office_id"];
       this.idModel = id;
     },
     editToggleContent(id) {
@@ -318,6 +349,10 @@ export default {
               d["Тип"] = data.results[key]["type_client"]["name"]
               d["type_client"] = data.results[key]["type_client"]["id"]
             }
+            if (data.results[key]["office"]) {
+              d["Филиал"] = data.results[key]["office"]["name"]
+              d["office_id"] = data.results[key]["office"]["id"]
+            }
             self.clients.push(d);
           }
         })
@@ -353,6 +388,10 @@ export default {
               d["Клиент"] = data.results[key]["client"]["name"]
               d["client_id"] = data.results[key]["client"]["id"]
             }
+            if (data.results[key]["office"]) {
+              d["Филиал"] = data.results[key]["office"]["name"]
+              d["office_id"] = data.results[key]["office"]["id"]
+            }
 
             self.incomes.push(d);
           }
@@ -369,6 +408,7 @@ export default {
           category_id: self.sourceModel,
           subcategory_id: self.noteModel,
           type_client_id: self.typeModel,
+          office_id: parseInt(self.officeModel),
           age: self.ageModel,
           dt_appearance: self.dtAppearModel.replace("T", " ") + ":00",
         })
@@ -389,6 +429,7 @@ export default {
           category_id: self.sourceModel,
           subcategory_id: self.noteModel,
           type_client_id: self.typeModel,
+          office_id: parseInt(self.officeModel),
           age: self.ageModel,
           dt_appearance: self.dtAppearModel.replace("T", " "),
         })
@@ -417,6 +458,18 @@ export default {
         })
         .then((data) => {
           self.clients_sources = data.results;
+        })
+    },
+    getOffices() {
+      const self = this;
+      fetch(process.env.baseUrl + "/v0/business/offices/all")
+        .then((response) => {
+          return response.json()
+        })
+        .then((data) => {
+          for (let key in data.results) {
+            self.offices.push(data.results[key]);
+          }
         })
     },
     getSubCategories() {

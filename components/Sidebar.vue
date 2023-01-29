@@ -11,6 +11,9 @@
           <NuxtLink to="/business/subcategories">Подкатегории</NuxtLink>
         </li>
         <li>
+          <NuxtLink to="/business/offices">Филиалы</NuxtLink>
+        </li>
+        <li>
           <NuxtLink to="/business/clients">Клиенты</NuxtLink>
         </li>
         <li>

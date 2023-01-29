@@ -8,6 +8,10 @@
       <div class="manage-data">
         <input type="date" v-model="dtStartModel" class="income-filter"/>
         <input type="date" v-model="dtEndModel" class="income-filter"/>
+        <select  class="office-filter"  v-model.trim="officeModel">
+          <option value="" disabled selected>Филиал</option>
+          <option v-for="c in offices" :value="c.id">{{ c.name }}</option>
+        </select>
         <div class="buttons">
           <button v-on:click="updateData">Обновить</button>
         </div>
@@ -31,15 +35,18 @@ export default {
     return {
       dtStartModel:"",
       dtEndModel: "",
+      officeModel: "",
       types: [],
       data: {},
       readyOperation: false,
       colors: ["#CD5C5C", "#F08080", "#FA8072", "#E9967A", "#FFA07A", "#DC143C", "#FF0000", "#B22222", "#8B0000",
         "#FFC0CB", "#FF69B4", "#FF1493", "#C71585", "#DB7093", "#98FB98", "#00FA9A", "#00FF7F", "#228B22", "#006400",
         "#FFD700", "#FFFF00", "#00FFFF", "#7FFFD4", "#5F9EA0", "#4682B4", "#E6E6FA", "#DDA0DD", "#4B0082", "#FFF5EE", ],
+      offices: [],
     }
   },
   beforeMount() {
+    this.getOffices();
     this.updateData();
 
   },
@@ -52,6 +59,18 @@ export default {
         return data[key];
       }
       return ""
+    },
+    getOffices() {
+      const self = this;
+      fetch(process.env.baseUrl + "/v0/business/offices/all")
+        .then((response) => {
+          return response.json()
+        })
+        .then((data) => {
+          for (let key in data.results) {
+            self.offices.push(data.results[key]);
+          }
+        })
     },
     updateData() {
       this.getOperations();
@@ -66,13 +85,16 @@ export default {
       if (this.dtEndModel) {
         url += "&dt_end=" + this.dtEndModel +"T23:59:59"
       }
+      if (this.officeModel) {
+        url += "&office_id=" + this.officeModel
+      }
       fetch(process.env.baseUrl + url)
         .then((response) => {
           return response.json()
         })
         .then((data) => {
           self.operations = data.results;
-
+          self.data = {}
           data.results.sort( (a, b) => {
             if ( a.dt_provision < b.dt_provision ){
               return -1;

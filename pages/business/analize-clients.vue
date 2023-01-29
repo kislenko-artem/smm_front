@@ -8,6 +8,10 @@
       <div class="manage-data">
         <input type="date" v-model="dtStartModel" class="income-filter"/>
         <input type="date" v-model="dtEndModel" class="income-filter"/>
+        <select  class="office-filter"  v-model.trim="officeModel">
+          <option value="" disabled selected>Филиал</option>
+          <option v-for="c in offices" :value="c.id">{{ c.name }}</option>
+        </select>
         <div class="buttons">
           <button v-on:click="updateData">Обновить</button>
         </div>
@@ -66,14 +70,17 @@ export default {
     return {
       dtStartModel:"",
       dtEndModel: "",
+      officeModel: "",
       types: [],
       data: {},
       agregateData: {},
       readyOperation: false,
       groupBy: groupDay,
+      offices: [],
     }
   },
   beforeMount() {
+    this.getOffices();
     this.updateData();
 
   },
@@ -81,6 +88,18 @@ export default {
     setGroupByDay() {
       this.groupBy = groupDay;
       this.updateData();
+    },
+    getOffices() {
+      const self = this;
+      fetch(process.env.baseUrl + "/v0/business/offices/all")
+        .then((response) => {
+          return response.json()
+        })
+        .then((data) => {
+          for (let key in data.results) {
+            self.offices.push(data.results[key]);
+          }
+        })
     },
     setGroupByMonth() {
       this.groupBy = groupMonth;
@@ -121,6 +140,9 @@ export default {
       }
       if (this.dtEndModel) {
         url += "&dt_end=" + this.dtEndModel +"T23:59:59"
+      }
+      if (this.officeModel) {
+        url += "&office_id=" + this.officeModel
       }
       fetch(process.env.baseUrl + url)
         .then((response) => {
