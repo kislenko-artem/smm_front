@@ -10,6 +10,10 @@
         <hr/>
         <div class="manage-data">
           <input type="text" v-model.trim="searchQuery" placeholder="Фильтр..." class="income-filter"/>
+          <select v-model.trim="officeModelFilter">
+            <option value="" disabled selected>Филиал</option>
+            <option v-for="c in offices" :value="c.id">{{ c.name }}</option>
+          </select>
           <input type="date" v-model="dtStartModel" class="income-filter"/>
           <input type="date" v-model="dtEndModel" class="income-filter"/>
           <div class="buttons">
@@ -179,6 +183,7 @@ export default {
       searchQuery: "",
       dtStartModel: "",
       dtEndModel: "",
+      officeModelFilter: 0,
       incomeModel: 0,
       expensesModel: 0,
       profitModel: 0,
@@ -315,6 +320,9 @@ export default {
       }
       if (this.dtEndModel) {
         url += "&dt_end=" + this.dtEndModel +"T23:59:59"
+      }
+      if (this.officeModelFilter > 0) {
+        url += "&office_id=" + this.officeModelFilter
       }
       fetch(process.env.baseUrl + url)
         .then((response) => {

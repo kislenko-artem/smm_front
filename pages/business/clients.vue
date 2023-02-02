@@ -10,6 +10,10 @@
         <hr/>
         <div class="manage-data">
           <input type="text" v-model.trim="searchQuery" placeholder="Фильтр..."/>
+          <select v-model.trim="officeModelFilter">
+            <option value="" disabled selected>Филиал</option>
+            <option v-for="c in offices" :value="c.id">{{ c.name }}</option>
+          </select>
           <input type="date" v-model="dtStartModel" class="income-filter"/>
           <input type="date" v-model="dtEndModel" class="income-filter"/>
           <div class="buttons">
@@ -167,6 +171,7 @@ export default {
       searchQuery: "",
       dtStartModel: "",
       dtEndModel: "",
+      officeModelFilter: 0,
 
       showPopUp: false,
       showEditPopUp: false,
@@ -321,6 +326,9 @@ export default {
       if (this.dtEndModel) {
         url += "&dt_end=" + this.dtEndModel +"T23:59:59"
       }
+      if (this.officeModelFilter > 0) {
+        url += "&office_id=" + this.officeModelFilter
+      }
       fetch(process.env.baseUrl + url)
         .then((response) => {
           return response.json()
@@ -365,6 +373,9 @@ export default {
       }
       if (this.dtEndModel) {
         url += "&dt_end=" + this.dtEndModel + "T23:59:59"
+      }
+      if (this.officeModelFilter > 0) {
+        url += "&office_id=" + this.officeModelFilter
       }
       fetch(process.env.baseUrl + url)
         .then((response) => {
@@ -590,18 +601,11 @@ export default {
 @media screen and (max-width: 450px) {
 
 
-  .clients-table th:nth-child(2) {
+  .clients-table th:nth-child(1) {
     display: none;
   }
 
-  .clients-table td:nth-child(2) {
-    display: none;
-  }
-  .clients-table th:nth-child(3) {
-    display: none;
-  }
-
-  .clients-table td:nth-child(3) {
+  .clients-table td:nth-child(1) {
     display: none;
   }
 
@@ -610,6 +614,13 @@ export default {
   }
 
   .clients-table td:nth-child(4) {
+    display: none;
+  }
+  .clients-table th:nth-child(5) {
+    display: none;
+  }
+
+  .clients-table td:nth-child(5) {
     display: none;
   }
 
@@ -634,6 +645,13 @@ export default {
   }
 
   .clients-table td:nth-child(8) {
+    display: none;
+  }
+  .clients-table th:nth-child(10) {
+    display: none;
+  }
+
+  .clients-table td:nth-child(10) {
     display: none;
   }
 
