@@ -33,6 +33,14 @@
             </tr>
           </table>
         </div>
+        <div>
+          <h3>ID участников</h3>
+          <table>
+            <tr v-for="item in list_data">
+              <td>{{ item.id }}</td>
+            </tr>
+          </table>
+        </div>
       </div>
     </div>
   </div>
@@ -46,6 +54,7 @@ export default {
       search: "",
       age_data: [],
       geography_data: [],
+      list_data: [],
       current_screen: "",
     }
   },
@@ -71,7 +80,7 @@ export default {
         window: window // null
       }).then((response) => {
         let interval = setInterval(() => {
-          fetch(process.env.baseUrl + 'v0/vk/stat/groups/' + this.search + "?age=1")
+          fetch(process.env.baseUrl + '/v0/vk/stat/groups/' + this.search + "?age=1")
             .then((response) => {
                 return response.json();
               }
@@ -97,6 +106,21 @@ export default {
               }
               self.geography_data = data;
               clearInterval(intervalAge);
+            });
+        }, 1000)
+
+        let intervalList = setInterval(() => {
+          fetch(process.env.baseUrl + '/v0/vk/stat/groups/' + this.search)
+            .then((response) => {
+                return response.json();
+              }
+            )
+            .then((data) => {
+              if (data != undefined && data.length == 0) {
+                return
+              }
+              self.list_data = data;
+              clearInterval(intervalList);
             });
         }, 1000)
       })
